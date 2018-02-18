@@ -16,7 +16,7 @@ if (!defined('ABSPATH') || !defined('O10N_ADMIN')) {
 $user = wp_get_current_user();
 
 // custom default CSS LINT options
-$csslint_options = get_user_meta($user->ID, 'optimization_csslint', true);
+$csslint_options = get_user_meta($user->ID, 'o10n_csslint', true);
 if ($csslint_options) {
     $csslint_options = $this->json->parse($csslint_options, true);
     $csslint_options = array(
@@ -27,13 +27,13 @@ if ($csslint_options) {
 }
 
 // auto csslint on changes
-$csslint_auto = get_user_meta($user->ID, 'optimization_csslint_auto', true);
+$csslint_auto = get_user_meta($user->ID, 'o10n_csslint_auto', true);
 
 // default stylesheet
 $theme_css_stylesheet = $view->theme_stylesheet();
 
 // editor theme
-$editor_theme = get_user_meta($user->ID, 'optimization_editor_theme', true);
+$editor_theme = get_user_meta($user->ID, 'o10n_editor_theme', true);
 if (!$editor_theme) {
     $editor_theme = 'default';
 } else {
