@@ -261,20 +261,15 @@ class Criticalcss extends Controller implements Controller_Interface
         }
 
         // concat CSS
-        $criticalcss = implode(' ', $criticalcss);
+        $criticalcss = trim(implode(' ', $criticalcss));
 
-        if ($this->debug_view) {
-            $criticalcss = "/**\n * Critical CSS Editor\n *\n * The extracted Critical CSS has been annotated with file references. \n * The Critical CSS source files are located in the theme directory ".$this->file->safe_path($this->file->theme_directory(array('critical-css')))."\n */\n" . $criticalcss;
-        }
+        $concat_hash = false;
 
-        // HTTP/2 Server Push or minify, store in file
-        $http2 = ($this->options->bool('css.critical.http2') && $this->core->module_loaded('http2'));
-        $concat_url = false;
-
-        if ($http2 && $this->env->is_ssl()) {
+        // minify critical CSS
+        if ($criticalcss !== '' && $this->options->bool('css.critical.minify.enabled')) {
 
             // concat hash
-            $concat_hash = md5($criticalcss);
+            $concat_hash = md5($criticalcss . json_encode(array($this->options->get('css.critical.minify.cssmin.filters'), $this->options->get('css.critical.minify.cssmin.plugins'))));
  
             // load from cache
             if ($this->cache->exists('css', 'concat', $concat_hash)) {
@@ -289,8 +284,51 @@ class Criticalcss extends Controller implements Controller_Interface
                 }
             } else {
 
-                // store cache file
-                $this->cache->put('css', 'concat', $concat_hash, $criticalcss, 'critical');
+                // create concatenated file using minifier
+                try {
+                    $minified = $this->minify($criticalcss);
+                } catch (Exception $err) {
+                    $minified = false;
+                }
+                if ($minified) {
+                    $criticalcss = $minified;
+
+                    // store cache file
+                    $this->cache->put('css', 'concat', $concat_hash, $criticalcss, 'critical');
+                }
+            }
+        }
+
+        if ($this->debug_view) {
+            $criticalcss = "/**\n * Critical CSS Editor\n *\n * The extracted Critical CSS has been annotated with file references. \n * The Critical CSS source files are located in the theme directory ".$this->file->safe_path($this->file->theme_directory(array('critical-css')))."\n */\n" . $criticalcss;
+        }
+
+        // HTTP/2 Server Push or minify, store in file
+        $http2 = ($this->options->bool('css.critical.http2') && $this->core->module_loaded('http2'));
+        $concat_url = false;
+
+        if ($http2 && $this->env->is_ssl()) {
+            if (!$concat_hash) {
+
+                // concat hash
+                $concat_hash = md5($criticalcss);
+     
+                // load from cache
+                if ($this->cache->exists('css', 'concat', $concat_hash)) {
+
+                    // preserve cache file based on access
+                    $this->cache->preserve('css', 'concat', $concat_hash, (time() - 3600));
+
+                    // get CSS from cache
+                    $cachecss = $this->cache->get('css', 'concat', $concat_hash);
+                    if ($cachecss) {
+                        $criticalcss = $cachecss;
+                    }
+                } else {
+
+                    // store cache file
+                    $this->cache->put('css', 'concat', $concat_hash, $criticalcss, 'critical');
+                }
             }
 
             // concat URL
@@ -360,5 +398,38 @@ class Criticalcss extends Controller implements Controller_Interface
         }
 
         return $HTML;
+    }
+
+    /**
+     * Minify stylesheets
+     */
+    final private function minify($CSS)
+    {
+        $this->last_used_minifier = false;
+
+        // load PHP minifier
+        if (!class_exists('\CssMin')) {
+            
+            // autoloader
+            require_once $this->core->modules('css')->dir_path() . 'lib/CssMin.php';
+        }
+
+        // minify
+        try {
+            $minified = \CssMin::minify($CSS, $this->options->get('css.critical.minify.cssmin.filters'), $this->options->get('css.critical.minify.cssmin.plugins'));
+        } catch (\Exception $err) {
+            throw new Exception('PHP CssMin failed: ' . $err->getMessage(), 'css');
+        }
+        if (!$minified && $minified !== '') {
+            if (\CssMin::hasErrors()) {
+                throw new Exception('PHP CssMin failed: <ul><li>' . implode("</li><li>", \CssMin::getErrors()) . '</li></ul>', 'css');
+            } else {
+                throw new Exception('PHP CssMin failed: unknown error', 'css');
+            }
+        }
+
+        $this->last_used_minifier = 'php';
+
+        return trim($minified);
     }
 }

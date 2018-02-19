@@ -23,7 +23,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
     <tr valign="top">
         <th scope="row">Async Loading <a href="https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery?hl=" target="_blank" title="Recommendations by Google"><span class="dashicons dashicons-editor-help"></span></a></th>
         <td>
-        <p class="poweredby">Powered by <a href="https://github.com/filamentgroup/loadCSS" target="_blank">loadCSS</a><span class="star"><a class="github-button" data-manual="1" href="https://github.com/filamentgroup/loadCSS" data-icon="octicon-star" data-show-count="true" aria-label="Star filamentgroup/loadCSS on GitHub">Star</a></span></p>
+            <p class="poweredby">Powered by <a href="https://github.com/filamentgroup/loadCSS" target="_blank">loadCSS</a><span class="star"><a class="github-button" data-manual="1" href="https://github.com/filamentgroup/loadCSS" data-icon="octicon-star" data-show-count="true" aria-label="Star filamentgroup/loadCSS on GitHub">Star</a></span></p>
             <label><input type="checkbox" name="o10n[css.async.enabled]" data-json-ns="1" value="1"<?php $checked('css.async.enabled'); ?> /> Enabled</label>
             <p class="description">When enabled, stylesheets are loaded asynchronously via <a href="https://github.com/filamentgroup/loadCSS" target="_blank">loadCSS</a> enhanced with <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content" target="_blank">responsive loading</a>.</p>
 
@@ -95,6 +95,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
                 </div>
 
                 <div class="suboption" data-ns="css.async"<?php $visible('css.async', ($get('css.async.load_timing.type') === 'inview'));  ?> data-ns-condition="css.async.load_timing.type==inview">
+                    <p class="poweredby">Powered by <a href="https://github.com/camwiegert/in-view" target="_blank">in-view.js</a><span class="star"><a class="github-button" data-manual="1" href="https://github.com/camwiegert/in-view" data-icon="octicon-star" data-show-count="true" aria-label="Star camwiegert/in-view on GitHub">Star</a></span></p>
                     <h5 class="h">&nbsp;CSS selector</h5>
                     <input type="text" name="o10n[css.async.load_timing.selector]" value="<?php $value('css.async.load_timing.selector'); ?>" />
                     <p class="description">Enter the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector" target="_blank">CSS selector</a> of the element to watch.</p>
@@ -150,6 +151,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
                         </div>
 
                         <div class="suboption" data-ns="css.async.render_timing"<?php $visible('css.async.render_timing', ($get('css.async.render_timing.type') === 'inview'));  ?> data-ns-condition="css.async.render_timing.type==inview">
+                            <p class="poweredby">Powered by <a href="https://github.com/camwiegert/in-view" target="_blank">in-view.js</a><span class="star"><a class="github-button" data-manual="1" href="https://github.com/camwiegert/in-view" data-icon="octicon-star" data-show-count="true" aria-label="Star camwiegert/in-view on GitHub">Star</a></span></p>
                             <h5 class="h">&nbsp;CSS selector</h5>
                             <input type="text" name="o10n[css.async.render_timing.selector]" value="<?php $value('css.async.render_timing.selector'); ?>" />
                             <p class="description">Enter the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector" target="_blank">CSS selector</a> of the element to watch.</p>

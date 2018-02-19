@@ -46,6 +46,14 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 == Changelog ==
 
+= 0.0.3 =
+
+Added: Critical CSS Widget in admin bar menu.
+
+= 0.0.2 =
+
+Added: minify critical CSS using [PHP CssMin](https://code.google.com/archive/p/cssmin/).
+
 = 0.0.1 =
 
 Beta release. Please provide feedback on [Github forum](https://github.com/o10n-x/wordpress-css-optimization/issues).

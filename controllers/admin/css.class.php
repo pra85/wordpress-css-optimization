@@ -124,7 +124,7 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
              'display'
          ));
     }
-
+    
     /**
      * Settings link on plugin overview.
      *
@@ -170,8 +170,7 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
     public function plugin_title()
     {
         ?><script>jQuery(function($){var r=$('*[data-plugin="<?php print $this->core->modules('css')->basename(); ?>"]');
-            $('.plugin-title strong',r).html('<?php print $this->core->modules('css')->name(); ?><a href="https://pagespeed.pro" class="g100" style="font-size: 10px;float: right;font-weight: normal;opacity: .2;line-height: 14px;">O10N</span>');
-            var d=$('.plugin-description',r).html();$('.plugin-description',r).html(d.replace('Google PageSpeed','<a href="https://developers.google.com/speed/pagespeed/insights/" target="_blank">Google PageSpeed</a>').replace('Google Lighthouse','<a href="https://developers.google.com/web/tools/lighthouse/" target="_blank">Google Lighthouse</a>').replace('ThinkWithGoogle.com','<a href="https://testmysite.thinkwithgoogle.com/" target="_blank">ThinkWithGoogle.com</a>').replace('Excellent','<span style="font-style:italic;color:#079c2d;">Excellent</span>'));
+            $('.plugin-title strong',r).html('<?php print $this->core->modules('css')->name(); ?><a href="https://optimization.team" target="_blank" class="g100">O10N</span>');
 });</script><?php
     }
 

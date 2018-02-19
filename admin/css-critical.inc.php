@@ -221,7 +221,55 @@ $files_list = $view->critical_css_files();
 <br />
 
 <table class="form-table">
-    <th scope="row">HTTP/2 Server Push</th>
+    <tr valign="top">
+        <th scope="row">Minify</th>
+        <td>
+            <label><input type="checkbox" value="1" name="o10n[css.critical.minify.enabled]" data-json-ns="1"<?php $checked('css.critical.minify.enabled'); ?> /> Enabled</label>
+            <p class="description">Compress CSS using <a href="https://github.com/natxet/CssMin" target="_blank">PHP CssMin</a>.</p>
+        </td>
+    </tr>
+</table>
+
+<div class="advanced-options" data-ns="css.critical.minify" data-json-advanced="css.critical.minify"<?php $visible('css.critical.minify'); ?>>
+
+    <table class="advanced-options-table widefat fixed striped">
+        <colgroup><col style="width: 85px;"/><col style="width: 250px;"/><col /></colgroup>
+        <thead class="first">
+            <tr>
+                <th class="toggle">
+                    <a href="javascript:void(0);" class="advanced-toggle-all button button-small">Toggle All</a>
+                </th>
+                <th class="head">
+                  PHP CssMin Options
+                </th>
+                <th>
+                    <p class="poweredby">Powered by <a href="https://github.com/natxet/CssMin" target="_blank">CssMin</a><span class="google-code"><a href="https://code.google.com/archive/p/cssmin/" target="_blank"><img src="<?php print trailingslashit(O10N_CORE_URI); ?>admin/images/google-code-18h.png" width="25" height="18" border="0" alt="Google Code" title="View on Google Code" /></a></span><span class="star">
+                    <a class="github-button" data-manual="1" href="https://github.com/natxet/CssMin" data-icon="octicon-star" data-show-count="true" aria-label="Star natxet/CssMin on GitHub">Star</a></span>
+                    </p>
+                </th> 
+            </tr>
+            <tr><td colspan="3" class="subhead">Filters <a href="https://code.google.com/archive/p/cssmin/wikis/MinifierFilters.wiki" target="_blank"><span class="dashicons dashicons-editor-help"></span></a></td></tr>
+        </thead>
+        <tbody>
+<?php
+    $advanced_options('css.critical.minify.cssmin.filters');
+?>
+        </tbody>
+        <thead>
+            <tr><td colspan="3" class="subhead">Plugins <a href="https://code.google.com/archive/p/cssmin/wikis/MinifierPlugins.wiki" target="_blank"><span class="dashicons dashicons-editor-help"></span></a></td></tr>
+        </thead>
+        <tbody>
+
+<?php
+    $advanced_options('css.critical.minify.cssmin.plugins');
+?>
+        </tbody>
+    </table>
+</div>
+
+<table class="form-table">
+    <tr>
+        <th scope="row">HTTP/2 Server Push</th>
         <td><?php if (!$module_loaded('http2')) {
     ?>
 <p class="description">Install the <a href="<?php print esc_url(add_query_arg(array('s' => 'o10n', 'tab' => 'search', 'type' => 'author'), admin_url('plugin-install.php'))); ?>">HTTP/2 Optimization</a> plugin to use this feature.</p>

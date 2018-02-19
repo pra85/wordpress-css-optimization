@@ -19,11 +19,13 @@ $user = wp_get_current_user();
 $csslint_options = get_user_meta($user->ID, 'o10n_csslint', true);
 if ($csslint_options) {
     $csslint_options = $this->json->parse($csslint_options, true);
-    $csslint_options = array(
-        'css' => array(
-            'lint' => $csslint_options
-        )
-    );
+    $options = array();
+    foreach ($csslint_options as $filter => $filter_settings) {
+        foreach ($filter_settings as $key => $value) {
+            $options['css.lint.' . $filter . '.' . $key] = $value;
+        }
+    }
+    $this->options->set($options);
 }
 
 // auto csslint on changes
@@ -114,7 +116,7 @@ if (!$editor_theme) {
         </thead>
         <tbody>
 <?php
-    $advanced_options('css.lint.errors', $csslint_options, true);
+    $advanced_options('css.lint.errors');
 ?>
         </tbody>
         <thead>
@@ -122,7 +124,7 @@ if (!$editor_theme) {
         </thead>
         <tbody>
 <?php
-    $advanced_options('css.lint.compatibility', $csslint_options, true);
+    $advanced_options('css.lint.compatibility');
 ?>
         </tbody>
         <thead>
@@ -130,7 +132,7 @@ if (!$editor_theme) {
         </thead>
         <tbody>
 <?php
-    $advanced_options('css.lint.performance', $csslint_options, true);
+    $advanced_options('css.lint.performance');
 ?>
         </tbody>
         <thead>
@@ -138,7 +140,7 @@ if (!$editor_theme) {
         </thead>
         <tbody>
 <?php
-    $advanced_options('css.lint.maintainability', $csslint_options, true);
+    $advanced_options('css.lint.maintainability');
 ?>
         </tbody>
         <thead>
@@ -146,7 +148,7 @@ if (!$editor_theme) {
         </thead>
         <tbody>
 <?php
-    $advanced_options('css.lint.accessibility', $csslint_options, true);
+    $advanced_options('css.lint.accessibility');
 ?>
         </tbody>
         <thead>
@@ -154,7 +156,7 @@ if (!$editor_theme) {
         </thead>
         <tbody>
 <?php
-    $advanced_options('css.lint.oocss', $csslint_options, true);
+    $advanced_options('css.lint.oocss');
 ?>
             <tr style="background-color:inherit;">
                 <td colspan="3">

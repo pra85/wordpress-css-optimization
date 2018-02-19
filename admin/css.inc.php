@@ -82,7 +82,7 @@ $x = $get('css.minify.filter.enabled');
         </thead>
         <tbody>
 <?php
-    $advanced_options('css.cssmin.filters');
+    $advanced_options('css.minify.cssmin.filters');
 ?>
         </tbody>
         <thead>
@@ -91,7 +91,7 @@ $x = $get('css.minify.filter.enabled');
         <tbody>
 
 <?php
-    $advanced_options('css.cssmin.plugins');
+    $advanced_options('css.minify.cssmin.plugins');
 ?>
         </tbody>
     </table>

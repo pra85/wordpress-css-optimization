@@ -166,19 +166,22 @@ class AdminViewCss extends AdminViewBase
                     'css.url_filter.config' => 'json-array'
                 ));
 
-                $filters_options = array_keys((array)$this->AdminForm->schema_option('css.cssmin.filters')->properties);
-                array_walk($filters_options, function (&$value, $key) {
-                    $value = 'css.cssmin.filters.' . $value;
-                });
-                $plugins_options = array_keys((array)$this->AdminForm->schema_option('css.cssmin.plugins')->properties);
-                array_walk($plugins_options, function (&$value, $key) {
-                    $value = 'css.cssmin.plugins.' . $value;
-                });
-                $cssmin_options = array_flip(array_merge($filters_options, $plugins_options));
-                array_walk($cssmin_options, function (&$value, $key) {
-                    $value = 'bool';
-                });
-                $forminput->type_verify($cssmin_options);
+                // CSSmin settings
+                if ($forminput->bool('css.minify.enabled')) {
+                    $filters_options = array_keys((array)$this->AdminForm->schema_option('css.minify.cssmin.filters')->properties);
+                    array_walk($filters_options, function (&$value, $key) {
+                        $value = 'css.minify.cssmin.filters.' . $value;
+                    });
+                    $plugins_options = array_keys((array)$this->AdminForm->schema_option('css.minify.cssmin.plugins')->properties);
+                    array_walk($plugins_options, function (&$value, $key) {
+                        $value = 'css.minify.cssmin.plugins.' . $value;
+                    });
+                    $cssmin_options = array_flip(array_merge($filters_options, $plugins_options));
+                    array_walk($cssmin_options, function (&$value, $key) {
+                        $value = 'bool';
+                    });
+                    $forminput->type_verify($cssmin_options);
+                }
 
                 // verify search & replace
                 $cssreplace = $forminput->get('css.replace', 'json-array', array());

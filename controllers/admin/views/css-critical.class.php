@@ -32,6 +32,7 @@ class AdminViewCssCritical extends AdminViewBase
             'AdminOptions',
             'AdminClient',
             'AdminAjax',
+            'AdminForm',
             'file',
             'json',
             'options'
@@ -475,7 +476,25 @@ class AdminViewCssCritical extends AdminViewBase
         // Critical CSS code optimization
         $forminput->type_verify(array(
             'css.critical.http2.enabled' => 'bool',
-            'css.critical.editor_public.enabled' => 'bool'
+            'css.critical.editor_public.enabled' => 'bool',
+            'css.critical.minify.enabled' => 'bool'
         ));
+
+        // CSSmin settings
+        if ($forminput->bool('css.critical.minify.enabled')) {
+            $filters_options = array_keys((array)$this->AdminForm->schema_option('css.critical.minify.cssmin.filters')->properties);
+            array_walk($filters_options, function (&$value, $key) {
+                $value = 'css.critical.minify.cssmin.filters.' . $value;
+            });
+            $plugins_options = array_keys((array)$this->AdminForm->schema_option('css.critical.minify.cssmin.plugins')->properties);
+            array_walk($plugins_options, function (&$value, $key) {
+                $value = 'css.critical.minify.cssmin.plugins.' . $value;
+            });
+            $cssmin_options = array_flip(array_merge($filters_options, $plugins_options));
+            array_walk($cssmin_options, function (&$value, $key) {
+                $value = 'bool';
+            });
+            $forminput->type_verify($cssmin_options);
+        }
     }
 }

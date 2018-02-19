@@ -6,7 +6,7 @@
  * @since      2.9.7
  * @package    o10n
  * @subpackage abovethefold/admin
- * @author     PageSpeed.pro <info@pagespeed.pro>
+ * @author     PageSpeed.pro <info@optimization.team>
  */
 
 $qs_start = (strpos($url, '?') !== false) ? '&' : '?';
