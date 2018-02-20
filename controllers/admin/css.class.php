@@ -6,7 +6,7 @@ namespace O10n;
  *
  * @package    optimization
  * @subpackage optimization/controllers/admin
- * @author     o10n-x <info@optimization.team>
+ * @author     Optimization.Team <info@optimization.team>
  */
 if (!defined('ABSPATH')) {
     exit;
@@ -40,10 +40,6 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
             'admin_base' => 'themes.php',
             'pagekey' => 'css-editor',
             'subtabs' => array(
-                'lint' => array(
-                    'title' => 'CSS Lint',
-                    'href' => '#csslint'
-                ),
                 'minify' => array(
                     'title' => 'Minify',
                     'href' => '#minify'
@@ -51,6 +47,10 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
                 'beautify' => array(
                     'title' => 'Beautify',
                     'href' => '#beautify'
+                ),
+                'lint' => array(
+                    'title' => 'CSS Lint',
+                    'href' => '#csslint'
                 )
             )
         )

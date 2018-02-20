@@ -204,7 +204,7 @@ if (!$editor_theme) {
 
                 <h3 style="margin-top:2em;margin-bottom:0px;" id="beautify">CSS Beautify</h3>
 
-                <p class="description">Beautify the CSS using a browser-build of <a href="https://jakubpawlowicz.github.io/clean-css/" target="_blank">clean-css</a>.</p>
+                <p class="description">Beautify the CSS using a browser-build of <a href="https://github.com/jakubpawlowicz/clean-css" target="_blank">clean-css</a>.</p>
 
                 <div class="advanced-options" data-json-advanced="custom">
                     <table class="advanced-options-table widefat fixed striped">
@@ -237,7 +237,7 @@ if (!$editor_theme) {
 
                 <h3 style="margin-top:2em;margin-bottom:0px;" id="minify">CSS Optimization</h3>
 
-                <p class="description">Minify and optimize the CSS using a browser-build of <a href="https://jakubpawlowicz.github.io/clean-css/" target="_blank">clean-css</a></p>
+                <p class="description">Minify and optimize the CSS using a browser-build of <a href="https://github.com/jakubpawlowicz/clean-css" target="_blank">clean-css</a></p>
 
                 <div class="advanced-options" data-json-advanced="custom">
                     <table class="advanced-options-table widefat fixed striped">

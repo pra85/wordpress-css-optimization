@@ -46,6 +46,10 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 == Changelog ==
 
+= 0.0.4 =
+
+Core update (see changelog.txt)
+
 = 0.0.3 =
 
 Added: Critical CSS Widget in admin bar menu.
