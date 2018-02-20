@@ -20,9 +20,9 @@ With debug modus enabled, the browser console will show detailed information abo
 
 The plugin contains an advanced CSS editor with CSS Lint, Clean-CSS code optimization and CSS Beautifier. The editor can be personalized with more than 30 themes.
 
-Additional features can be requested on the [Github forum](https://github.com/o10n-x/wordpress-css-optimization/issues).
-
 ![Advanced CSS Editor](https://github.com/o10n-x/wordpress-css-optimization/blob/master/docs/images/css-editor.png)
+
+Additional features can be requested on the [Github forum](https://github.com/o10n-x/wordpress-css-optimization/issues).
 
 ## Changelog
 
