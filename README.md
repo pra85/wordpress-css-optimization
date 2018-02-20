@@ -22,6 +22,8 @@ The plugin contains an advanced CSS editor with CSS Lint, Clean-CSS code optimiz
 
 Additional features can be requested on the [Github forum](https://github.com/o10n-x/wordpress-css-optimization/issues).
 
+![Advanced CSS Editor](https://github.com/o10n-x/css-optimization/blob/master/docs/images/css-editor.png)
+
 ## Changelog
 
 #### 0.0.1
