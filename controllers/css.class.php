@@ -255,7 +255,7 @@ class Css extends Controller implements Controller_Interface
         }
 
         // concatenation
-        $concat = $this->options->bool('css.minify.concat');
+        $concat = $this->options->bool('css.minify') && $this->options->bool('css.minify.concat');
 
         // rel="preload"
         if ($this->rel_preload) {
@@ -1089,7 +1089,7 @@ class Css extends Controller implements Controller_Interface
         $proxy = $this->options->bool('css.proxy');
 
         // concat
-        $concat = $this->options->bool('css.minify.concat');
+        $concat = $minify && $this->options->bool('css.minify.concat');
 
         // replace href
         $replaceHref = false;
@@ -1811,8 +1811,7 @@ class Css extends Controller implements Controller_Interface
                 }
             }
 
-            die('http2');
-            if ($this->http2->push($url, 'style', false, $this->http2_push, ($cdn_url ? null : true))) {
+            if (Core::get('http2')->push($url, 'style', false, $this->http2_push, ($cdn_url ? null : true))) {
 
                 // return original URL that has been pushed
                 return $url;

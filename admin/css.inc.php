@@ -111,24 +111,31 @@ submit_button(__('Save'), 'primary large', 'is_submit', false);
             <p data-ns="css.minify.concat"<?php $visible('css.minify.concat'); ?>>
                 <label><input type="checkbox" value="1" name="o10n[css.minify.concat.minify]"<?php $checked('css.minify.concat.minify'); ?> /> Use <code>Minify</code> for concatenation.</label>
             </p>
-            <p data-ns="css.minify.concat"<?php $visible('css.minify.concat'); ?>>
-                <label><input type="checkbox" value="1" name="o10n[css.minify.concat.filter.enabled]" data-json-ns="1"<?php $checked('css.minify.concat.filter.enabled'); ?> /> Enable filter</label>
+            <div class="suboption" data-ns="css.minify.concat"<?php $visible('css.minify.concat'); ?>>
+                <label><input type="checkbox" value="1" name="o10n[css.minify.concat.filter.enabled]" data-json-ns="1"<?php $checked('css.minify.concat.filter.enabled'); ?> /> Enable group filter</label>
                 <span data-ns="css.minify.concat.filter"<?php $visible('css.minify.concat.filter'); ?>>
                     <select name="o10n[css.minify.concat.filter.type]" data-ns-change="css.minify.concat.filter" data-json-default="<?php print esc_attr(json_encode('include')); ?>">
                         <option value="include"<?php $selected('css.minify.concat.filter.type', 'include'); ?>>Include by default</option>
                         <option value="exclude"<?php $selected('css.minify.concat.filter.type', 'exclude'); ?>>Exclude by default</option>
                     </select>
                 </span>
-            </p>
+                <p class="description">The group filter enables creating multiple concat groups that are shared more efficiently during page navigation.</p>
+            </div>
         </td>
     </tr>
     <tr valign="top" data-ns="css.minify.concat.filter"<?php $visible('css.minify.concat.filter'); ?>>
         <th scope="row">&nbsp;</th>
         <td style="padding-top:0px;">
-            <h5 class="h">&nbsp;Concatenation filter</h5>
+            <h5 class="h">&nbsp;Concat Group Filter</h5>
             <div id="css-minify-concat-filter-config"><div class="loading-json-editor"><?php print __('Loading JSON editor...', 'optimization'); ?></div></div>
             <input type="hidden" class="json" name="o10n[css.minify.concat.filter.config]" data-json-type="json-array" data-json-editor-compact="1" data-json-editor-init="1" value="<?php print esc_attr($json('css.minify.concat.filter.config')); ?>" />
-            <p class="description">Enter a JSON array with objects. with strings to match (part of) stylesheet <code>&lt;link&gt;</code> or inline <code>&lt;style&gt;</code> elements, e.g. <code>["bootstrap.min.css","id=\"stylesheet\""]</code>. </p>
+            <p class="description">Enter a JSON array with concat group config objects. </p>
+            <div class="info_yellow"><strong>Example:</strong> <pre id="concat_group_example" class="clickselect" title="<?php print esc_attr('Click to select', 'optimization'); ?>" style="cursor:copy;padding: 10px;margin: 0 1px;margin-top:5px;font-size: 13px;">{
+    "match": ["stylesheet.css", {"string": "/plugin.*.css/", "regex":true}], 
+    "group": {"title":"Group title", "key": "group-file-key", "id": "id-attr"}, 
+    "minify": true, 
+    "exclude": false
+}</pre></div>
            
         </td>
     </tr>

@@ -226,21 +226,10 @@ class AdminViewCss extends AdminViewBase
                     'css.async.render_timing.enabled' => 'bool',
 
                     'css.http2_push.enabled' => 'bool',
-                    'css.http2_push.filter.enabled' => 'bool',
-                    'css.http2_push.filter.type' => 'string',
-                    'css.http2_push.filter.include' => 'newline_array',
-                    'css.http2_push.filter.exclude' => 'newline_array',
 
                     'css.async.localStorage.enabled' => 'bool',
-                    'css.async.localStorage.max_size' => 'int',
-                    'css.async.localStorage.expire' => 'int',
-                    'css.async.localStorage.update_interval' => 'int',
-                    'css.async.localStorage.head_update' => 'bool',
 
                     'css.proxy.enabled' => 'bool',
-                    'css.proxy.include' => 'newline_array',
-                    'css.proxy.capture.enabled' => 'bool',
-                    'css.proxy.capture.list' => 'json-array',
 
                     'css.cdn.enabled' => 'bool'
                 ));
@@ -309,6 +298,34 @@ class AdminViewCss extends AdminViewBase
                         'css.async.render_timing.media' => 'string'
                     ));
                     }
+                }
+
+                // HTTP/2
+                if ($forminput->bool('css.http2_push.filter.enabled')) {
+                    $forminput->type_verify(array(
+                        'css.http2_push.filter.type' => 'string',
+                        'css.http2_push.filter.include' => 'newline_array',
+                        'css.http2_push.filter.exclude' => 'newline_array'
+                    ));
+                }
+
+                // localStorage
+                if ($forminput->bool('css.async.localStorage.enabled')) {
+                    $forminput->type_verify(array(
+                        'css.async.localStorage.max_size' => 'int',
+                        'css.async.localStorage.expire' => 'int',
+                        'css.async.localStorage.update_interval' => 'int',
+                        'css.async.localStorage.head_update' => 'bool'
+                    ));
+                }
+
+                // proxy
+                if ($forminput->bool('css.proxy.enabled')) {
+                    $forminput->type_verify(array(
+                        'css.proxy.include' => 'newline_array',
+                        'css.proxy.capture.enabled' => 'bool',
+                        'css.proxy.capture.list' => 'json-array'
+                    ));
                 }
 
                 if ($forminput->bool('css.cdn.enabled')) {

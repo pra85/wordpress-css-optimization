@@ -184,18 +184,23 @@ submit_button(__('Save'), 'primary large', 'is_submit', false);
     <tr valign="top">
         <th scope="row">HTTP/2 Server Push</th>
         <td>
+        <?php if (!$module_loaded('http2')) {
+    ?>
+<p class="description">Install the <a href="<?php print esc_url(add_query_arg(array('s' => 'o10n', 'tab' => 'search', 'type' => 'author'), admin_url('plugin-install.php'))); ?>">HTTP/2 Optimization</a> plugin to use this feature.</p>
+<?php
+} else {
+        ?>
             <label><input type="checkbox" name="o10n[css.http2_push.enabled]" data-json-ns="1" value="1"<?php $checked('css.http2_push.enabled'); ?> /> Enabled</label>
             <p class="description">When enabled, stylesheets are pushed using <a href="https://developers.google.com/web/fundamentals/performance/http2/#server_push" target="_blank">HTTP/2 Server Push</a>.</p>
 
-            <?php
-                if (!$this->env->is_ssl()) {
-                    ?>
-<p class="warning_red" style="padding:5px;padding-left:7px;" data-ns="css.http2_push"<?php $visible('css.http2_push'); ?>>HTTP/2 requires a SSL connection.</p>
-<?php
-                }
-            ?>
-
-            <p data-ns="css.http2_push"<?php $visible('css.http2_push'); ?>>
+            <div data-ns="css.http2_push"<?php $visible('css.http2_push'); ?>>
+                <?php
+                    if (!$this->env->is_ssl()) {
+                        print '<div class="warning_red">HTTP/2 Server Push requires SSL</div>';
+                    } elseif (!$this->options->bool('http2.push.enabled')) {
+                        print '<div class="warning_red">HTTP/2 Server Push is disabled in <a href="'.add_query_arg(array( 'page' => 'o10n-http2', 'tab' => 'push' ), admin_url('admin.php')).'">HTTP/2 Server Push Settings</a></div>';
+                    } ?>
+            
                 <label><input type="checkbox" value="1" name="o10n[css.http2_push.filter.enabled]" data-json-ns="1"<?php $checked('css.http2_push.filter.enabled'); ?> /> Enable filter</label>
                 <span data-ns="css.http2_push.filter"<?php $visible('css.http2_push.filter'); ?>>
                     <select name="o10n[css.http2_push.filter.type]" data-ns-change="css.http2_push.filter" data-json-default="<?php print esc_attr(json_encode('include')); ?>">
@@ -203,7 +208,10 @@ submit_button(__('Save'), 'primary large', 'is_submit', false);
                         <option value="exclude"<?php $selected('css.http2_push.filter.type', 'exclude'); ?>>Exclude List</option>
                     </select>
                 </span>
-            </p>
+            </div>
+<?php
+    }
+?>
         </td>
     </tr>
     <tr valign="top" data-ns="css.http2_push.filter"<?php $visible('css.http2_push.filter', ($get('css.http2_push.filter.type') === 'include')); ?> data-ns-condition="css.http2_push.filter.type==include">
