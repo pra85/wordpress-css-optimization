@@ -33,7 +33,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
             <p data-ns="css.async"<?php $visible('css.async'); ?>>
                 <label><input type="checkbox" name="o10n[css.async.noscript]" value="1"<?php $checked('css.async.noscript'); ?> /> Add fallback stylesheets via <code>&lt;noscript&gt;</code> for browsers without javascript support.</label>
             </p>
-            <p data-ns="css.async"<?php $visible('css.async'); ?>>
+            <div class="suboption" data-ns="css.async"<?php $visible('css.async'); ?>>
                 <label><input type="checkbox" value="1" name="o10n[css.async.filter.enabled]" data-json-ns="1"<?php $checked('css.async.filter.enabled'); ?> /> Enable config filter</label>
                 <span data-ns="css.async.filter"<?php $visible('css.async.filter'); ?>>
                     <select name="o10n[css.async.filter.type]" data-ns-change="css.async.filter" data-json-default="<?php print esc_attr(json_encode('include')); ?>">
@@ -41,7 +41,8 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
                         <option value="exclude"<?php $selected('css.async.filter.type', 'exclude'); ?>>Exclude by default</option>
                     </select>
                 </span>
-            </p>
+                <p class="description">The config filter enables to include or exclude scripts from async loading or to apply custom async load configuration to individual files or concat groups.</p>
+            </div>
         </td>
     </tr>
     <tr valign="top" data-ns="css.async.filter"<?php $visible('css.async.filter'); ?>>
