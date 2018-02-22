@@ -41,7 +41,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
                         <option value="exclude"<?php $selected('css.async.filter.type', 'exclude'); ?>>Exclude by default</option>
                     </select>
                 </span>
-                <p class="description">The config filter enables to include or exclude scripts from async loading or to apply custom async load configuration to individual files or concat groups.</p>
+                <p class="description">The config filter enables to include or exclude stylesheets from async loading or to apply custom async load configuration to individual files or concat groups.</p>
             </div>
         </td>
     </tr>
