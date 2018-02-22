@@ -34,7 +34,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
                 <label><input type="checkbox" name="o10n[css.async.noscript]" value="1"<?php $checked('css.async.noscript'); ?> /> Add fallback stylesheets via <code>&lt;noscript&gt;</code> for browsers without javascript support.</label>
             </p>
             <p data-ns="css.async"<?php $visible('css.async'); ?>>
-                <label><input type="checkbox" value="1" name="o10n[css.async.filter.enabled]" data-json-ns="1"<?php $checked('css.async.filter.enabled'); ?> /> Enable filter</label>
+                <label><input type="checkbox" value="1" name="o10n[css.async.filter.enabled]" data-json-ns="1"<?php $checked('css.async.filter.enabled'); ?> /> Enable config filter</label>
                 <span data-ns="css.async.filter"<?php $visible('css.async.filter'); ?>>
                     <select name="o10n[css.async.filter.type]" data-ns-change="css.async.filter" data-json-default="<?php print esc_attr(json_encode('include')); ?>">
                         <option value="include"<?php $selected('css.async.filter.type', 'include'); ?>>Include by default</option>
@@ -47,10 +47,33 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
     <tr valign="top" data-ns="css.async.filter"<?php $visible('css.async.filter'); ?>>
         <th scope="row">&nbsp;</th>
         <td style="padding-top:0px;">
-            <h5 class="h">&nbsp;Async Filter</h5>
+            <h5 class="h">&nbsp;Async Config Filter</h5>
             <div id="css-async-filter-config"><div class="loading-json-editor"><?php print __('Loading JSON editor...', 'o10n'); ?></div></div>
-            <input type="hidden" class="json" name="o10n[css.async.filter.config]" data-json-type="json-array" data-json-editor-compact="1" data-json-editor-init="1" value="<?php print esc_attr($json('css.async.filter.config')); ?>" />
-            <p class="description">Enter a JSON array with objects. with strings to match (part of) stylesheet <code>&lt;link&gt;</code> elements, e.g. <code>["bootstrap.min.css","id=\"stylesheet\""]</code>.</p>
+            <input type="hidden" class="json" name="o10n[css.async.filter.config]" data-json-type="json-array" data-json-editor-height="auto" data-json-editor-init="1" value="<?php print esc_attr($json('css.async.filter.config')); ?>" />
+            <p class="description">Enter a JSON array with objects. (<a href="javascript:void(0);" onclick="jQuery('#concat_group_example').fadeToggle();">show example</a>)</p>
+            <div class="info_yellow" id="concat_group_example" style="display:none;"><strong>Example:</strong> <pre class="clickselect" title="<?php print esc_attr('Click to select', 'optimization'); ?>" style="cursor:copy;padding: 10px;margin: 0 1px;margin-top:5px;font-size: 13px;">{
+    "match": "/concat-group-(x|y)/",
+    "match_concat": true,
+    "regex": true,
+    "async": true,
+    "media": "all",
+    "rel_preload": true,
+    "load_position": "timing",
+    "load_timing": {
+        "type": "media",
+        "media": "screen and (max-width: 700px)"
+    },
+    "render_timing": {
+        "type": "requestAnimationFrame",
+        "frame": 1
+    },
+    "localStorage": {
+        "max_size": 10000,
+        "update_interval": 3600,
+        "expire": 86400,
+        "head_update": true
+    }
+}</pre></div>
         </td>
     </tr>
     <tr valign="top" data-ns="css.async"<?php $visible('css.async'); ?>>
