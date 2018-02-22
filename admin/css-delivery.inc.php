@@ -58,6 +58,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
     "regex": true,
     "async": true,
     "media": "all",
+    "noscript": true,
     "rel_preload": true,
     "load_position": "timing",
     "load_timing": {
