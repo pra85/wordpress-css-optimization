@@ -38,10 +38,8 @@ class Css extends Controller implements Controller_Interface
     private $render_timing;
     private $rel_preload = false; // default rel="preload"
     private $noscript = false; // default <noscript>
-    private $requestAnimationFrame = false; // default requestAnimationFrame
 
     private $async_filter; // filter for stylesheets
-    private $async_filterConcat; // filter for concat groups
     private $async_filterType;
 
     private $localStorage = false; // default localStorage config
@@ -114,11 +112,6 @@ class Css extends Controller implements Controller_Interface
                     $this->noscript = true;
                 }
 
-                // requestAnimationFrame
-                if ($this->options->bool('css.async.requestAnimationFrame')) {
-                    $this->requestAnimationFrame = true;
-                }
-
                 // async download position
                 $this->load_position = ($this->options->get('css.async.load_position') === 'timing') ? 'timing' : 'header';
                 if ($this->load_position === 'timing') {
@@ -160,7 +153,7 @@ class Css extends Controller implements Controller_Interface
                     $timing_type = $this->options->get('css.async.render_timing.type');
                     switch ($timing_type) {
                         case "requestAnimationFrame":
-                            $this->requestAnimationFrame = false;
+                            
                         break;
                         case "media":
 
@@ -206,10 +199,6 @@ class Css extends Controller implements Controller_Interface
                         $this->client->set_config('css', 'localStorage_head_update', 1);
                     }
                 }
-            }
-
-            if ($this->requestAnimationFrame) {
-                $this->client->set_config('css', 'requestAnimationFrame', true);
             }
 
             // add filter for HTML output
@@ -343,17 +332,21 @@ class Css extends Controller implements Controller_Interface
                         $concat_groups[$concat_group] = array();
 
                         // group settings
-                        $concat_group_settings[$concat_group] = array();
+                        if (!isset($concat_group_settings[$concat_group])) {
+                            $concat_group_settings[$concat_group] = array();
+                        }
 
                         // load async by default
-                        $concat_group_settings[$concat_group]['async'] = true;
+                        if (!isset($concat_group_settings[$concat_group]['async'])) {
+                            $concat_group_settings[$concat_group]['async'] = true;
+                        }
 
                         // apply async filter
-                        if (!empty($this->async_filter)) {
+                        if (!empty($this->async_filter) && isset($concat_group_settings[$concat_group]['group']) && isset($concat_group_settings[$concat_group]['group']['key'])) {
 
                             // apply filter to key
-                            $asyncConfig = $this->tools->filter_config_match($key, $this->async_filter, $this->async_filterType);
-                            
+                            $asyncConfig = $this->tools->filter_config_match($concat_group_settings[$concat_group]['group']['key'], $this->async_filter, $this->async_filterType);
+
                             // filter config object
                             if ($asyncConfig && is_array($asyncConfig)) {
 
@@ -366,14 +359,14 @@ class Css extends Controller implements Controller_Interface
                                         $concat_group_settings[$concat_group]['load_position'] = $asyncConfig['load_position'];
                                     }
 
-                                    // custom render position
-                                    if (isset($asyncConfig['render_timing']) && $asyncConfig['render_timing'] !== $this->load_position) {
-                                        $concat_group_settings[$concat_group]['render_timing'] = $asyncConfig['render_timing'];
+                                    // load timing
+                                    if (isset($asyncConfig['load_position']) && $asyncConfig['load_position'] === 'timing' && isset($asyncConfig['load_timing'])) {
+                                        $concat_group_settings[$concat_group]['load_timing'] = $asyncConfig['load_timing'];
                                     }
 
                                     // custom render position
-                                    if (isset($asyncConfig['requestAnimationFrame']) && $asyncConfig['requestAnimationFrame'] !== $this->requestAnimationFrame) {
-                                        $concat_group_settings[$concat_group]['requestAnimationFrame'] = $asyncConfig['requestAnimationFrame'];
+                                    if (isset($asyncConfig['render_timing']) && $asyncConfig['render_timing'] !== $this->load_position) {
+                                        $concat_group_settings[$concat_group]['render_timing'] = $asyncConfig['render_timing'];
                                     }
 
                                     // custom rel_preload
@@ -462,8 +455,8 @@ class Css extends Controller implements Controller_Interface
                 $rel_preload = (isset($sheet['rel_preload'])) ? $sheet['rel_preload'] : $this->rel_preload;
                 $noscript = (isset($sheet['noscript'])) ? $sheet['noscript'] : $this->noscript;
                 $load_position = (isset($sheet['load_position'])) ? $sheet['load_position'] : $this->load_position;
+                $load_timing = (isset($sheet['load_timing'])) ? $sheet['load_timing'] : $this->load_timing;
                 $render_timing = (isset($sheet['render_timing'])) ? $sheet['render_timing'] : $this->render_timing;
-                $requestAnimationFrame = (isset($sheet['requestAnimationFrame'])) ? $sheet['requestAnimationFrame'] : $this->requestAnimationFrame;
 
                 // minified sheet
                 if (isset($sheet['minified']) && $sheet['minified']) {
@@ -506,8 +499,8 @@ class Css extends Controller implements Controller_Interface
                     'original_url' => $sheet['href'],
                     'media' => $sheet['media'],
                     'load_position' => $load_position,
-                    'render_timing' => $render_timing,
-                    'requestAnimationFrame' => $requestAnimationFrame
+                    'load_timing' => $load_timing,
+                    'render_timing' => $render_timing
                 );
                 if (isset($sheet['localStorage'])) {
                     $async_sheet['localStorage'] = $sheet['localStorage'];
@@ -524,6 +517,7 @@ class Css extends Controller implements Controller_Interface
                         'rel_preload' => $rel_preload,
                         'noscript' => $noscript,
                         'load_position' => $load_position,
+                        'load_timing' => $load_timing,
                         'render_timing' => $render_timing
                     );
                 } else {
@@ -764,7 +758,6 @@ class Css extends Controller implements Controller_Interface
                     $load_timing = false;
                 }
                 $render_timing = (isset($concat_group_settings[$concat_group]['render_timing'])) ? $concat_group_settings[$concat_group]['render_timing'] : $this->render_timing;
-                $requestAnimationFrame = (isset($concat_group_settings[$concat_group]['requestAnimationFrame'])) ? $concat_group_settings[$concat_group]['requestAnimationFrame'] : $this->requestAnimationFrame;
 
                 // custom media
                 $media = (isset($concat_group_settings[$concat_group]['media'])) ? $concat_group_settings[$concat_group]['media'] : $media;
@@ -779,8 +772,8 @@ class Css extends Controller implements Controller_Interface
                         'original_url' => $concat_original_urls,
                         'media' => $media,
                         'load_position' => $load_position,
-                        'render_timing' => $render_timing,
-                        'requestAnimationFrame' => $requestAnimationFrame
+                        'load_timing' => $load_timing,
+                        'render_timing' => $render_timing
                     );
                     if (isset($concat_group_settings[$concat_group]['localStorage'])) {
                         $async_sheet['localStorage'] = $concat_group_settings[$concat_group]['localStorage'];
@@ -799,6 +792,7 @@ class Css extends Controller implements Controller_Interface
                             'rel_preload' => $rel_preload,
                             'noscript' => $noscript,
                             'load_position' => $load_position,
+                            'load_timing' => $load_timing,
                             'render_timing' => $render_timing
                         )));
                     }
@@ -822,6 +816,7 @@ class Css extends Controller implements Controller_Interface
                             'rel_preload' => false,
                             'noscript' => $noscript,
                             'load_position' => $load_position,
+                            'load_timing' => $load_timing,
                             'render_timing' => $render_timing
                         )));
                     }
@@ -855,22 +850,16 @@ class Css extends Controller implements Controller_Interface
                     // load position
                     $load_position = ($sheet['load_position'] && $sheet['load_position'] !== $this->load_position) ? $sheet['load_position'] : false;
                     if ($load_position) {
-                        $load_position = ($load_position === 'timing') ? 1 : 0;
+                        $load_position = ($load_position === 'timing') ? $this->client->config_index('key', 'timing') : 0;
                     }
-                    if ($load_position === 'timing') {
+                    if ($sheet['load_position'] && $sheet['load_position'] === 'timing') {
                         $load_timing = ($sheet['load_timing'] && $sheet['load_timing'] !== $this->load_timing) ? $sheet['load_timing'] : false;
                     } else {
                         $load_timing = false;
                     }
 
-                    // render position
+                    // render timing
                     $render_timing = ($sheet['render_timing'] && $sheet['render_timing'] !== $this->render_timing) ? $sheet['render_timing'] : false;
-                    if ($render_timing) {
-                        $render_timing = ($render_timing === 'footer') ? 1 : 0;
-                    }
-
-                    // render requestAnimationFrame
-                    $requestAnimationFrame = ($sheet['requestAnimationFrame'] && $sheet['requestAnimationFrame'] !== $this->requestAnimationFrame) ? $sheet['requestAnimationFrame'] : null;
 
                     // hash type prefix
                     $hash_type_prefix = (isset($hash_type_prefixes[$sheet['type']])) ? $hash_type_prefixes[$sheet['type']] : false;
@@ -891,49 +880,58 @@ class Css extends Controller implements Controller_Interface
                     // sheet URL or hash
                     $async_sheet[] = $sheet['url'];
 
+                    $index = count($async_sheet);
+                    $async_sheet[] = null; // media
+                    $async_sheet[] = null; // load position
+                    $async_sheet[] = null; // localStorage
+
                     // sheet media
-                    $media_set = $load_set = $raf_set = false;
+                    $media_set = $load_set = $render_set = false;
                     if (isset($sheet['media']) && $sheet['media'] !== 'all') {
-                        $async_sheet[] = $sheet['media'];
+                        $async_sheet[$index] = $sheet['media'];
                         $media_set = true;
                     }
 
                     // load config
                     if ($load_position !== false || $render_timing !== false) {
-                        if (!$media_set) {
-                            $async_sheet[] = '__O10N_NULL__';
-                            $media_set = true;
-                        }
                         if ($render_timing !== false) {
-                            $load_config[] = array($load_position, $load_timing, $render_timing);
+                            $async_sheet[($index + 1)] = array($load_position, $this->timing_config($load_timing), $this->timing_config($render_timing));
                         } elseif ($load_timing !== false) {
-                            $load_config[] = array($load_position, $load_timing);
+                            $async_sheet[($index + 1)] = array($load_position, $this->timing_config($load_timing));
                         } else {
-                            $async_sheet[] = $load_position;
+                            $async_sheet[($index + 1)] = $load_position;
                         }
-                        $load_set = true;
                     }
 
                     // custom localStorage config
                     if (isset($sheet['localStorage'])) {
-                        if (!$media_set) {
-                            $async_sheet[] = '__O10N_NULL__';
-                            $async_sheet[] = '__O10N_NULL__';
-                        } elseif (!$load_set) {
-                            $async_sheet[] = '__O10N_NULL__';
-                            $async_sheet[] = '__O10N_NULL__';
-                        } elseif (!$raf_set) {
-                            $async_sheet[] = '__O10N_NULL__';
-                        }
                         if (is_array($sheet['localStorage'])) {
-                            $async_sheet[] = $this->client->config_array_data($sheet['localStorage'], array(
-                                'max_size' => 'JSONKEY',
-                                'update_interval' => 'JSONKEY',
-                                'head_update' => 'JSONKEY',
-                                'expire' => 'JSONKEY'
-                            ));
+                            $localStorage = array();
+                            $config_keys = array('max_size','expire','update_interval');
+                            foreach ($config_keys as $key) {
+                                $localStorage[$this->client->config_index('css', 'localStorage_'.$key)] = $sheet['localStorage'][$key];
+                            }
+
+                            if ($sheet['localStorage']['head_update']) {
+                                $localStorage[$this->client->config_index('css', 'localStorage_head_update')] = $sheet['localStorage']['head_update'];
+                            }
+
+                            $async_sheet[($index + 2)] = $localStorage;
                         } else {
-                            $async_sheet[] = ($sheet['localStorage']) ? 1 : 0;
+                            $async_sheet[($index + 2)] = ($sheet['localStorage']) ? 1 : 0;
+                        }
+                    }
+
+                    $value_set = false;
+                    for ($i = count($async_sheet); $i >= $index; $i--) {
+                        if ($async_sheet[$i] !== null) {
+                            $value_set = true;
+                        } else {
+                            if (!$value_set) {
+                                unset($async_sheet[$i]);
+                            } else {
+                                $async_sheet[$i] = '__O10N_NULL__';
+                            }
                         }
                     }
 
@@ -1269,14 +1267,13 @@ class Css extends Controller implements Controller_Interface
                                 $sheet['load_position'] = $asyncConfig['load_position'];
                             }
 
-                            // custom render position
-                            if (isset($asyncConfig['render_timing']) && $asyncConfig['render_timing'] !== $this->load_position) {
-                                $sheet['render_timing'] = $asyncConfig['render_timing'];
+                            if (isset($asyncConfig['load_position']) && $asyncConfig['load_position'] === 'timing' && isset($asyncConfig['load_timing'])) {
+                                $sheet['load_timing'] = $asyncConfig['load_timing'];
                             }
 
                             // custom render position
-                            if (isset($asyncConfig['requestAnimationFrame']) && $asyncConfig['requestAnimationFrame'] !== $this->requestAnimationFrame) {
-                                $sheet['requestAnimationFrame'] = $asyncConfig['requestAnimationFrame'];
+                            if (isset($asyncConfig['render_timing']) && $asyncConfig['render_timing'] !== $this->load_position) {
+                                $sheet['render_timing'] = $asyncConfig['render_timing'];
                             }
 
                             // custom rel_preload

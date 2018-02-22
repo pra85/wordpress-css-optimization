@@ -46,6 +46,10 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 == Changelog ==
 
+= 0.0.6 = 
+
+Bugfix/improvement: Async Config Filter load and render timing.
+
 = 0.0.5 =
 
 Bugfix: HTTP/2 Server Push not applied to async loaded stylesheets.
