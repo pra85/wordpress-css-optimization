@@ -336,16 +336,18 @@ class Css extends Controller implements Controller_Interface
                             $concat_group_settings[$concat_group] = array();
                         }
 
+                        $concat_group_key = (isset($concat_group_settings[$concat_group]['group']) && isset($concat_group_settings[$concat_group]['group']['key'])) ? $concat_group_settings[$concat_group]['group']['key'] : 'global';
+
                         // load async by default
                         if (!isset($concat_group_settings[$concat_group]['async'])) {
                             $concat_group_settings[$concat_group]['async'] = true;
                         }
 
                         // apply async filter
-                        if (!empty($this->async_filter) && isset($concat_group_settings[$concat_group]['group']) && isset($concat_group_settings[$concat_group]['group']['key'])) {
+                        if (!empty($this->async_filter)) {
 
                             // apply filter to key
-                            $asyncConfig = $this->tools->filter_config_match($concat_group_settings[$concat_group]['group']['key'], $this->async_filter, $this->async_filterType);
+                            $asyncConfig = $this->tools->filter_config_match($concat_group_key, $this->async_filter, $this->async_filterType);
 
                             // filter config object
                             if ($asyncConfig && is_array($asyncConfig)) {

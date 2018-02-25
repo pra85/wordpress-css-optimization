@@ -129,8 +129,8 @@ submit_button(__('Save'), 'primary large', 'is_submit', false);
             <h5 class="h">&nbsp;Concat Group Filter</h5>
             <div id="css-minify-concat-filter-config"><div class="loading-json-editor"><?php print __('Loading JSON editor...', 'optimization'); ?></div></div>
             <input type="hidden" class="json" name="o10n[css.minify.concat.filter.config]" data-json-type="json-array" data-json-editor-height="auto" data-json-editor-init="1" value="<?php print esc_attr($json('css.minify.concat.filter.config')); ?>" />
-            <p class="description">Enter a JSON array with concat group config objects. </p>
-            <div class="info_yellow"><strong>Example:</strong> <pre id="concat_group_example" class="clickselect" title="<?php print esc_attr('Click to select', 'optimization'); ?>" style="cursor:copy;padding: 10px;margin: 0 1px;margin-top:5px;font-size: 13px;">{
+            <p class="description">Enter a JSON array with concat group config objects. (<a href="javascript:void(0);" onclick="jQuery('#concat_group_example').fadeToggle();">show example</a>)</p>
+            <div class="info_yellow" id="concat_group_example" style="display:none;"><strong>Example:</strong> <pre class="clickselect" title="<?php print esc_attr('Click to select', 'optimization'); ?>" style="cursor:copy;padding: 10px;margin: 0 1px;margin-top:5px;font-size: 13px;">{
     "match": ["stylesheet.css", {"string": "/plugin.*.css/", "regex":true}], 
     "group": {"title":"Group title", "key": "group-file-key", "id": "id-attr"}, 
     "minify": true, 
