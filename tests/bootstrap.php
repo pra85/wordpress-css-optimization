@@ -6,7 +6,7 @@ if (! $_tests_dir) {
 }
 
 define('PLUGIN_NAME', 'css-optimization.php');
-define('PLUGIN_FOLDER', basename(dirname(__DIR__)));
+define('PLUGIN_FOLDER', 'css-optimization');
 define('PLUGIN_PATH', PLUGIN_FOLDER.'/'.PLUGIN_NAME);
 
 // Activates this plugin in WordPress so it can be tested.
