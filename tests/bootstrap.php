@@ -5,7 +5,7 @@ if (! $_tests_dir) {
     $_tests_dir = '/tmp/wordpress-tests-lib';
 }
 
-define('PLUGIN_NAME', 'cf-page-cache.php');
+define('PLUGIN_NAME', 'css-optimization.php');
 define('PLUGIN_FOLDER', basename(dirname(__DIR__)));
 define('PLUGIN_PATH', PLUGIN_FOLDER.'/'.PLUGIN_NAME);
 
