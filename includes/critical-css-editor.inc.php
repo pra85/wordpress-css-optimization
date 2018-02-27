@@ -12,7 +12,7 @@
 $qs_start = (strpos($url, '?') !== false) ? '&' : '?';
 
 $critical_url = $url . $qs_start . 'o10n-no-css=1&t=' . time();
-$full_url = $url . $qs_start . 't=' . time(); // regular view
+$full_url = $url . $qs_start . 'o10n-full-css=1&t=' . time(); // regular view
 
 // custom theme
 $user = wp_get_current_user();
@@ -42,14 +42,17 @@ $output = '<!DOCTYPE html>
 <h1>Critical CSS Editor</h1>
 <h2>Above The Fold Optimization</h2>
 </div>
+<div class="b">
 <button type="button" title="Split View (horizontal)" id="btn_split_h"><span class="dashicons dashicons-image-flip-horizontal"></span></button>
 <button type="button" title="Split View (vertical)" id="btn_split_v"><span class="dashicons dashicons-image-flip-vertical"></span></button>
 <button type="button" title="Toggle Single View: Critical CSS vs Full CSS" id="btn_full_toggle"><span class="dashicons dashicons-admin-page"></span></button>
 <button type="button" title="Edit Critical CSS (CodeMirror)" id="btn_editor"><span class="dashicons dashicons-editor-code"></span></button>&nbsp;&nbsp;
 <button type="button" title="Reload Critical CSS View"><span class="dashicons dashicons-update" id="btn_reload"></span></button>
 <button type="button" title="Open Critical CSS View in new window (useful for responsive testing)" id="btn_open"><span class="dashicons dashicons-external"></span></button>&nbsp;&nbsp;&nbsp;&nbsp;
-<button type="button" title="Extract Critical CSS (javascript widget based on viewport)" id="btn_extract_critical_css"><span class="dashicons dashicons-media-code"></span></button>
+<button type="button" title="Extract Critical CSS (javascript widget based on viewport)" id="btn_extract_critical_css"><span class="dashicons dashicons-download" style="color:#4285f4;"></span></button>
 <button type="button" title="Download Full CSS (javascript widget)" id="btn_extract_full_css"><span class="dashicons dashicons-download"></span></button>
+</div>
+<div class="toggletitle" style="display:none;"></div>
 <div class="syncscroll"><label><input type="checkbox" value="1"> Synchronize scroll</label></div>
 <div class="clear"></div>
 </header>

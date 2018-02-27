@@ -56,7 +56,7 @@ class Criticalcss extends Controller implements Controller_Interface
      */
     final public function load_critical_css()
     {
-        if (!is_admin() && (isset($_GET['o10n-css']) || isset($_GET['o10n-no-css']))) {
+        if (!is_admin() && (isset($_GET['o10n-css']) || isset($_GET['o10n-no-css']) || isset($_GET['o10n-full-css']))) {
             if (!$this->options->bool('css.critical.editor_public.enabled') && (!is_user_logged_in() || !current_user_can('manage_options'))) {
                 wp_die('No permission');
             }
@@ -75,6 +75,15 @@ class Criticalcss extends Controller implements Controller_Interface
                 // mark iframe view
                 $this->debug_view = true;
 
+                add_filter('o10n_html_final', array($this, 'editor_iframe_view'), PHP_INT_MAX);
+            }
+
+            // full CSS iframe view
+            if (isset($_GET['o10n-full-css'])) {
+
+                // mark iframe view
+                $this->debug_view = true;
+                
                 add_filter('o10n_html_final', array($this, 'editor_iframe_view'), PHP_INT_MAX);
             }
         }
@@ -389,7 +398,7 @@ class Criticalcss extends Controller implements Controller_Interface
         }
 
         // iframe
-        $iframe_script = '<script src="' . $this->core->modules('css')->dir_url() . 'public/js/view-css-editor-iframe.js"></script>';
+        $iframe_script = '<script>var o10n_css_path=' . json_encode($this->core->modules('css')->dir_url()) . ';</script><script src="' . $this->core->modules('css')->dir_url() . 'public/js/view-css-editor-iframe.js"></script>';
 
         if (preg_match('/(<head[^>]*>)/Ui', $HTML, $out)) {
             $HTML = str_replace($out[0], $out[0] . $iframe_script, $HTML);
