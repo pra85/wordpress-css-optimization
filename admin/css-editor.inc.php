@@ -94,7 +94,7 @@ if (!$editor_theme) {
 
                 <h3 style="margin-bottom:0px;" id="csslint"><span class="csslint-logo">CSS <strong>LINT</strong></span></h3>
 
-                <p class="description">Verify the quality and performance of the CSS using <a href="http://csslint.net/" target="_blank">CSS LINT</a>.</p>
+                <p class="description">Verify the quality and performance of the CSS code using <a href="http://csslint.net/" target="_blank">CSS LINT</a>.</p>
 
 <div class="advanced-options csslint-options" data-json-advanced="custom" data-no-update="1">
     <table class="advanced-options-table widefat fixed striped">

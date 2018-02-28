@@ -922,6 +922,9 @@ class Css extends Controller implements Controller_Interface
                         } else {
                             $async_sheet[($index + 2)] = ($sheet['localStorage']) ? 1 : 0;
                         }
+                        
+                        // load client module
+                        $this->client->load_module('localstorage');
                     }
 
                     $value_set = false;

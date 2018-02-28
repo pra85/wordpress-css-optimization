@@ -46,6 +46,10 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 == Changelog ==
 
+= 0.0.10 =
+
+* Bugfix: localStorage client module not loaded for individual script based timed loading/exec config.
+
 = 0.0.9 =
 
 * Bugfix: Critical CSS drag/drop sorting broken by Closure Compiler.
