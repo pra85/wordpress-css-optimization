@@ -207,6 +207,9 @@ class AdminViewCssEditor extends AdminViewBase
             $files = array();
 
             $file = (isset($_GET['file'])) ? $_GET['file'] : false;
+            if (strpos($file, '../') !== false) {
+                throw new Exception('Relative paths are not allowed.', 'admin');
+            }
             if ($file) {
 
                 // absolute path
@@ -218,12 +221,7 @@ class AdminViewCssEditor extends AdminViewBase
                         throw new Exception('Invalid file', 'admin');
                     }
                 } else {
-                    $file = realpath($theme_directory . $file);
-
-                    // verify path
-                    if ($file && strpos($file, $theme_directory) !== 0) {
-                        throw new Exception('Invalid file', 'admin');
-                    }
+                    $file = $theme_directory . $file;
                 }
 
                 if ($file && file_exists($file)) {

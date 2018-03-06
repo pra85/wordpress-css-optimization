@@ -57,12 +57,6 @@ class Criticalcss extends Controller implements Controller_Interface
     final public function load_critical_css()
     {
         if (!is_admin() && (isset($_GET['o10n-css']) || isset($_GET['o10n-no-css']) || isset($_GET['o10n-full-css']))) {
-
-            // disable abtf
-            if (defined('WPABTF_VERSION')) {
-                define('DONOTABTF', true);
-            }
-
             if (!$this->options->bool('css.critical.editor_public.enabled') && (!is_user_logged_in() || !current_user_can('manage_options'))) {
                 wp_die('No permission');
             }
