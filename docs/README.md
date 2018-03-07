@@ -620,7 +620,7 @@ Critical CSS files are stored in the theme directory `/wp-content/theme/YOURTHEM
 
 Each critical CSS stylesheet can have a partner JSON file to provide conditions for including the critical CSS on a page, e.g. `critical-css/frontpage-critical-css.json` for `critical-css/frontpage-critical-css.css`. 
 
-The conditional JSON is an array with 2 depth levels `[{condition},{condition}]` and `[[{condition},{condition}]]`. Depth level 1 provides in `OR` functionality while the second array level provides in `AND` functionality. 
+The conditional JSON is an array with 2 depth levels `[{condition},{condition}]` and `[[{condition},{condition}]]`. Depth level 1 provides in `OR` functionality while the second level provides in `AND` functionality. 
 
 A condition object consists of the required property `method` which refers to a function, e.g. WordPress conditional functions such as `is_front_page` or `is_page` or your custom function and the optional properties `arguments` and `result`.
 
