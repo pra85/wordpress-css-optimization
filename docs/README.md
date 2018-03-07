@@ -226,8 +226,8 @@ The async load config filter enables to fine tune async load configuration for i
 
 * `domReady`
 * `requestIdleCallback`
-	* `timeout` Optionally, a timeout in miliseconds to force loading of the stylesheet.
-	* `setTimeout` Optionally, a time in miliseconds for a setTimeout fallback for browsers that do not support requestIdleCallback. 
+	* `timeout` Optionally, a timeout in milliseconds to force loading of the stylesheet.
+	* `setTimeout` Optionally, a time in milliseconds for a setTimeout fallback for browsers that do not support requestIdleCallback. 
 * `requestAnimationFrame`
 	* `frame` The frame target (default is frame 1)
 * `inview`
