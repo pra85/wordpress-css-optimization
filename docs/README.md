@@ -236,7 +236,9 @@ The async load config filter enables to fine tune async load configuration for i
 * `media`
 	* `media` the Media Query to trigger loading of the stylesheet.
 
-`render_timing` is an object consisting of the required property `type` and optional timing method related properties (see `load_timing`). Render timing differs from load timing as it only affects the actual rendering (painting) of a stylesheet in the browser and it enables to unrender stylesheets, making it possible to change the design interactively based on a timing method. For optimization it also enables to start downloading stylesheets on domReady while rendering them based on a timing method.
+`render_timing` is an object consisting of the required property `type` and optional timing method related properties (see `load_timing`). 
+
+Render timing differs from load timing as it only affects the actual rendering (painting) of a stylesheet in the browser and it enables to unrender stylesheets, making it possible to change the design interactively based on a timing method. For optimization it also enables to start downloading stylesheets on domReady while rendering them based on a timing method.
 
 #### Example Async Load Configuration
 
