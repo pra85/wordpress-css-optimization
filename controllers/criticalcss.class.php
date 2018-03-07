@@ -159,28 +159,28 @@ class Criticalcss extends Controller implements Controller_Interface
                                 }
 
                                 // parameters to apply to method
-                                $params = (isset($condition['params'])) ? $condition['params'] : null;
+                                $arguments = (isset($condition['arguments'])) ? $condition['arguments'] : null;
 
                                 // result to expect from method
                                 $expected_result = (isset($condition['result'])) ? $condition['result'] : true;
 
                                 // call method
-                                if ($params === null) {
+                                if ($arguments === null) {
                                     if (isset($method_cache[$method])) {
                                         $result = $method_cache[$method];
                                     } else {
                                         $result = $method_cache[$method] = call_user_func($method);
                                     }
                                 } else {
-                                    $params_key = json_encode($params);
+                                    $arguments_key = json_encode($arguments);
 
-                                    if (isset($method_cache[$method]) && isset($method_cache[$method][$params_key])) {
-                                        $result = $method_cache[$method][$params_key];
+                                    if (isset($method_cache[$method]) && isset($method_cache[$method][$arguments_key])) {
+                                        $result = $method_cache[$method][$arguments_key];
                                     } else {
                                         if (!isset($method_param_cache[$method])) {
                                             $method_param_cache[$method] = array();
                                         }
-                                        $result = $method_param_cache[$method][$params_key] = call_user_func_array($method, $params);
+                                        $result = $method_param_cache[$method][$arguments_key] = call_user_func_array($method, $arguments);
                                     }
                                 }
 
