@@ -195,7 +195,7 @@ $files_list = $view->critical_css_files();
         <thead>
             <tr>
                 <th class="singlehead">
-                   Critical CSS Conditions <a href="#" target="_blank"><span class="dashicons dashicons-editor-help"></span></a>
+                   Critical CSS Conditions <a href="https://github.com/o10n-x/wordpress-css-optimization/tree/master/docs#conditions" target="_blank"><span class="dashicons dashicons-editor-help"></span></a>
                    <p class="description" style="font-weight:normal;margin-bottom:0px;">Conditions enable to configure tailored Critical CSS for individual posts, pages, categories or templates. You can create custom conditions to apply Critical CSS based on PHP logic, for example based on a multi-site ID or a cookie.</p>
                 </th>
             </tr>
@@ -212,6 +212,18 @@ $files_list = $view->critical_css_files();
             </td></tr>
         </tbody>
     </table>
+    <br />
+    <p class="suboption description">Enter a JSON array with objects. There are 2 depth levels in the array, level 1 provides in <code>OR</code> functionality while the second array level provides in <code>AND</code> functionality. Each object must contain a <code>method</code> parameter (e.g. is_front_page or is_post), optionally <code>arguments</code> with arguments to pass to the method and optionally the parameter <code>result</code> containing the result to expect from the method, which could be an array (e.g. get_the_ID() -> 1,2,3). The default expected result is <code>true</code>). You can use WordPress functions or custom functions as method.</p>
+    <p class="suboption description">It may appear difficult but it's efficient and simple in practice, and it's performant with millions of conditions. (<a href="javascript:void(0);" onclick="jQuery('#condition_example').fadeToggle();">show example</a>)</p>
+            <div class="info_yellow" id="condition_example" style="display:none;"><strong>Example:</strong> <pre class="clickselect" title="<?php print esc_attr('Click to select', 'optimization'); ?>" style="cursor:copy;padding: 10px;margin: 0 1px;margin-top:5px;font-size: 13px;">{
+    "method": "is_page",
+    "arguments": [[1,6,19]]
+}</pre>
+<strong>Example 2:</strong> <pre class="clickselect" title="<?php print esc_attr('Click to select', 'optimization'); ?>" style="cursor:copy;padding: 10px;margin: 0 1px;margin-top:5px;font-size: 13px;">{
+    "method": "is_front_page"
+}</pre></div>
+    
+
     <div class="submit">
         <button type="button" class="button button-primary save">Save Conditions</button>
         <button type="button" class="button cancel">Cancel</button>

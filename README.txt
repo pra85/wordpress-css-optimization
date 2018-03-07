@@ -5,7 +5,7 @@ Tags: css, critical css, async, minify, editor, concat, minifier, concatenation,
 Requires at least: 4.0
 Requires PHP: 5.4
 Tested up to: 4.9.4
-Stable tag: 0.0.16
+Stable tag: 0.0.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,20 +46,24 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 == Changelog ==
 
+= 0.0.17 =
+* Added: example critical CSS condition JSON.
+* Updated JSON schema for critical CSS conditions (core 0.0.16)
+
 = 0.0.16 =
-Bugfix: settings link on plugin index.
+* Bugfix: settings link on plugin index.
 
 = 0.0.15 =
-Core update (see changelog.txt)
+* Core update (see changelog.txt)
 
 = 0.0.14 =
-Added: Critical CSS editor compatibility with old ABTF plugin.
+* Added: Critical CSS editor compatibility with old ABTF plugin.
 
 = 0.0.13 =
-Bugfix: Timed loading/exec not working on iphone when using localStorage.
+* Bugfix: Timed loading/exec not working on iphone when using localStorage.
 
 = 0.0.12 =
-Core update (see changelog.txt)
+* Core update (see changelog.txt)
 
 = 0.0.10 =
 
