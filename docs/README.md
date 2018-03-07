@@ -188,3 +188,16 @@ The group filter enables to create bundles of stylesheets. The configuration is 
 **Note:** The plugin creates short CSS URLs by using a hash index. This means that the first concatenated stylesheet will have the filename `1.css`. The CDN option with CDN mask enables to load the stylesheets from `https://cdn.tld/1.css` resulting in the shortest URL possible.
 
 When you use automated concatenation and the content of stylesheets change on each request, the hash index could grow to a big number. You can reset the hash index from the admin bar menu under `CSS Cache`. When you clear the CSS cache, the hash index is reset to 0.
+
+
+# CSS Delivery Optimization
+
+CSS delivery optimization enables asynchronous loading of stylesheets. The plugin provides in many options and unique innovations to achieve the best CSS loading performance.
+
+**Note** You can enable debug modus by adding `define('O10N_DEBUG', true);` to wp-config.php. The browser console will show details about CSS loading and a [Performance API](https://developer.mozilla.org/nl/docs/Web/API/Performance) result for each step of the loading and rendering process.
+
+## Async loading
+
+The plugin provides the option to load stylesheets asynchronous using [loadCSS](https://github.com/filamentgroup/loadCSS) enhanced with Media Query support for responsive loading and an option to use `localStorage` cache for improved performance.
+
+When using `rel="preload" as="style"` the stylesheets are always downloaded by the browser and the plugin will provide in a polyfill for browsers that do not support rel="preload". If you prefer to load stylesheets from localStorage, it may be best to not use rel="preload". When using debug modus, the Performance API result can provide an insight into what method provides the best loading performance for your website.
