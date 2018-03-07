@@ -183,7 +183,7 @@ The group filter enables to create bundles of stylesheets. The configuration is 
 ```
 </details>
 
-
+---
 
 **Note:** The plugin creates short CSS URLs by using a hash index. This means that the first concatenated stylesheets will have the filename `1.css`. The CDN option with CDN mask enables to load the stylesheets from `https://cdn.tld/1.css` resulting in the shortest URL possible.
 
