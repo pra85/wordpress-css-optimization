@@ -240,6 +240,8 @@ The async load config filter enables to fine tune async load configuration for i
 
 Render timing differs from load timing as it only affects the actual rendering (painting) of a stylesheet in the browser and it enables to unrender stylesheets, making it possible to change the design interactively based on a timing method. For optimization it also enables to start downloading stylesheets on domReady while rendering them based on a timing method.
 
+`localStorage` is a boolean or an object consisting of the properties `max_size`, `update_interval`, `expire` and `head_update`. The max_size property enables to restrict the cache to stylesheets with a size below a trheshold. The expire property enables to set a expire time in seconds. The update_interval enables to define a time in seconds to update the cache in the background (a Web Worker) and the head_update property is a boolean to define if a conditional HEAD request should be used to verify of stylesheet has been modified, to save bandwith.
+
 #### Example Async Load Configuration
 
 ```json
