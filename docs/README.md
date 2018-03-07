@@ -198,6 +198,400 @@ CSS delivery optimization enables asynchronous loading of stylesheets. The plugi
 
 ## Async loading
 
-The plugin provides the option to load stylesheets asynchronous using [loadCSS](https://github.com/filamentgroup/loadCSS) enhanced with Media Query support for responsive loading and an option to use `localStorage` cache for improved performance.
+The plugin provides an option to load stylesheets asynchronous using [loadCSS](https://github.com/filamentgroup/loadCSS) enhanced with Media Query support for responsive loading and an option to use `localStorage` cache for improved performance.
 
 When using `rel="preload" as="style"` the stylesheets are always downloaded by the browser and the plugin will provide in a polyfill for browsers that do not support rel="preload". If you prefer to load stylesheets from localStorage, it may be best to not use rel="preload". When using debug modus, the Performance API result can provide an insight into what method provides the best loading performance for your website.
+
+#### Async Load Config Filter
+
+The async load config filter enables to fine tune async load configuration for individual stylesheets or concat groups.
+
+![Async Load Config Filter](https://github.com/o10n-x/wordpress-css-optimization/blob/master/docs/images/async-load-config.png)
+
+`match` is a string or regular expression to match a stylesheet URL.
+
+`regex` is a boolean to enable regular expression based matching.
+
+`async` is a boolean to enable or disable async loading for the matched stylesheet.
+
+`media` is a string representing a Media Query to apply to the stylesheet.
+
+`rel_preload` is a boolean to enable or disable `rel="preload" as="style"` based loading of the stylesheet.
+
+`noscript` is a boolean to enable or disable a noscript fallback for the individual stylesheet.
+
+`load_position` is a string with the two possible values `header` and `timing`. The option header will instantly start loading the stylesheet in the header (on javascript startup time) and timing will enable the `load_timing` option for further configuration.
+
+`load_timing` is an object consisting of the required property `type` and optional timing method related properties. The following timing methods are currently available
+
+* `domReady`
+* `requestIdleCallback`
+	* `timeout` optionally, a timeout in miliseconds to force loading of the stylesheet.
+	* `setTimeout` optionally, a time in miliseconds for a setTimeout fallback for browsers that do not support requestIdleCallback. 
+* `requestAnimationFrame`
+	* `frame` the frame target (default is frame 1)
+* `inview`
+	* `selector` The CSS selector of the element to watch.
+	* `offset` An offset in pixels from the element to trigger loading of the stylesheet.
+* `media`
+	* `media` The Media Query to trigger loading of the stylesheet.
+
+
+#### Example Async Load Configuration
+
+```json
+[
+  {
+    "match": "/group-key-(x|y)/",
+    "regex": true,
+    "async": true,
+    "media": "all",
+    "noscript": true,
+    "localStorage": {
+      "max_size": 10000,
+      "update_interval": 3600,
+      "expire": 86400,
+      "head_update": true
+    }
+  }
+]
+```
+
+<details/>
+  <summary>JSON schema for CSS Concat Group Filter config</summary>
+
+```json
+{
+	"config": {
+        "type": "array",
+        "items": {
+            "title": "Stylesheet filter configuration",
+            "type": "object",
+            "properties": {
+                "match": {
+                    "title": "A string or regular expression to match a stylesheet URL or group key.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "regex": {
+                    "title": "Use regular expression match",
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
+                },
+                "media": {
+                    "title": "Apply custom media query for responsive preloading.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "async": {
+                    "title": "Load stylesheet async (include/exclude)",
+                    "type": "boolean",
+                    "default": true
+                },
+                "rel_preload": {
+                    "title": "Load stylesheet using rel=preload",
+                    "type": "boolean",
+                    "default": false
+                },
+                "noscript": {
+                    "title": "Add fallback stylesheets via <noscript>",
+                    "type": "boolean",
+                    "default": false
+                },
+                "load_position": {
+                    "title": "Load position of CSS",
+                    "type": "string",
+                    "enum": ["header", "timing"],
+                    "default": "header"
+                },
+                "load_timing": {
+		            "title": "Timing configuration",
+		            "oneOf": [{
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "domReady"
+		                        ],
+		                        "default": "domReady"
+		                    }
+		                },
+		                "required": ["type"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "requestIdleCallback"
+		                        ],
+		                        "default": "requestIdleCallback"
+		                    },
+		                    "timeout": {
+		                        "title": "Timeout to force execution.",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number",
+		                            "minimum": 1
+		                        }]
+		                    },
+		                    "setTimeout": {
+		                        "title": "setTimeout fallback for browsers that do not support requestIdleCallback (leave blank to disable async execution)",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number",
+		                            "minimum": 1
+		                        }]
+		                    }
+		                },
+		                "required": ["type"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "requestAnimationFrame"
+		                        ],
+		                        "default": "requestAnimationFrame"
+		                    },
+		                    "frame": {
+		                        "title": "Frame number to start script execution.",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number",
+		                            "minimum": 1,
+		                            "default": 1
+		                        }]
+		                    }
+		                },
+		                "required": ["type"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "inview"
+		                        ],
+		                        "default": "inview"
+		                    },
+		                    "selector": {
+		                        "title": "CSS selector",
+		                        "type": "string",
+		                        "minLength": 1
+		                    },
+		                    "offset": {
+		                        "title": "Offset in pixels from the edge of the element.",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number"
+		                        }]
+		                    }
+		                },
+		                "required": ["type", "selector"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "media"
+		                        ],
+		                        "default": "media"
+		                    },
+		                    "media": {
+		                        "title": "Media query",
+		                        "type": "string",
+		                        "minLength": 1
+		                    }
+		                },
+		                "required": ["type", "media"]
+		            }]
+		        },
+		        "render_timing": {
+		            "title": "Timing configuration",
+		            "oneOf": [{
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "domReady"
+		                        ],
+		                        "default": "domReady"
+		                    }
+		                },
+		                "required": ["type"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "requestIdleCallback"
+		                        ],
+		                        "default": "requestIdleCallback"
+		                    },
+		                    "timeout": {
+		                        "title": "Timeout to force execution.",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number",
+		                            "minimum": 1
+		                        }]
+		                    },
+		                    "setTimeout": {
+		                        "title": "setTimeout fallback for browsers that do not support requestIdleCallback (leave blank to disable async execution)",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number",
+		                            "minimum": 1
+		                        }]
+		                    }
+		                },
+		                "required": ["type"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "requestAnimationFrame"
+		                        ],
+		                        "default": "requestAnimationFrame"
+		                    },
+		                    "frame": {
+		                        "title": "Frame number to start script execution.",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number",
+		                            "minimum": 1,
+		                            "default": 1
+		                        }]
+		                    }
+		                },
+		                "required": ["type"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "inview"
+		                        ],
+		                        "default": "inview"
+		                    },
+		                    "selector": {
+		                        "title": "CSS selector",
+		                        "type": "string",
+		                        "minLength": 1
+		                    },
+		                    "offset": {
+		                        "title": "Offset in pixels from the edge of the element.",
+		                        "oneOf": [{
+		                            "type": "string",
+		                            "enum": [""]
+		                        }, {
+		                            "type": "number"
+		                        }]
+		                    }
+		                },
+		                "required": ["type", "selector"]
+		            }, {
+		                "type": "object",
+		                "properties": {
+		                    "type": {
+		                        "title": "Timing method",
+		                        "type": "string",
+		                        "enum": [
+		                            "media"
+		                        ],
+		                        "default": "media"
+		                    },
+		                    "media": {
+		                        "title": "Media query",
+		                        "type": "string",
+		                        "minLength": 1
+		                    }
+		                },
+		                "required": ["type", "media"]
+		            }]
+		        },
+                "localStorage": {
+                    "title": "Override stylesheet cache configuration",
+                    "oneOf": [{
+                        "type": "boolean"
+                    }, {
+                        "type": "object",
+                        "properties": {
+                            "max_size": {
+                                "title": "Maximum size of stylesheet to store in cache.",
+                                "type": "number",
+                                "minimum": 1
+                            },
+                            "update_interval": {
+                                "title": "Interval to update the cache.",
+                                "type": "number",
+                                "minimum": 1
+                            },
+                            "expire": {
+                                "title": "Expire time in seconds.",
+                                "type": "number",
+                                "minimum": 1
+                            },
+                            "head_update": {
+                                "title": "Use HTTP HEAD request to update cache based on etag / last-modified headers.",
+                                "type": "boolean",
+                                "default": true
+                            }
+                        },
+                        "anyOf": [{
+                            "required": ["max_size"]
+                        }, {
+                            "required": ["update_interval"]
+                        }, {
+                            "required": ["expire"]
+                        }, {
+                            "required": ["head_update"]
+                        }],
+                        "additionalProperties": false
+                    }]
+                }
+            },
+            "required": ["match", "async"],
+            "additionalProperties": false
+        },
+        "uniqueItems": true
+    }
+}
+```
+</details>
+
+---
