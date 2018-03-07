@@ -41,7 +41,7 @@ The plugins provides advanced functionality to concatenate stylesheets. It inclu
 
 You can chose the option `Minify` to concatenate stylesheets using the CSSMin Minify configuration. By default stylesheets are simply bundled in their original format, which could be their minified version when using CSS minification.
 
-#### CSS Concat Group Filter
+#### Concat Group Filter
 
 The group filter enables to create bundles of stylesheets. The configuration is an array of JSON objects. Each object is a concat group and contains the required properties `match` (stylesheets to match) and `group` (object with group details).
 
