@@ -45,6 +45,8 @@ You can chose the option `Minify` to concatenate stylesheets using the CSSMin Mi
 
 The group filter enables to create bundles of stylesheets. The configuration is an array of JSON objects. Each object is a concat group and contains the required properties `match` (stylesheets to match) and `group` (object with group details).
 
+![Concat Group Filter Editor](https://github.com/o10n-x/wordpress-css-optimization/blob/master/docs/images/concat-group-filter.png)
+
 `match` is an array with strings or JSON objects. The JSON object format contains the required property `string` (match string) and optional properties `regex` (boolean to enable regular expression match) and `exclude` (exclude from group). The match list determines which stylesheets are included in the group.
 
 `group` is an object with the required properties `title` and `key` and the optional property `id` (an HTML attribute ID to add to the stylesheet element). The `key` property is used in the file path which enables to recognize the concat group source file, e.g. `/cache/o10n/css/concat/1:group-key.css`. 
