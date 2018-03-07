@@ -32,8 +32,8 @@ The filter list accepts parts of HTML stylesheet elements which makes it possibl
 
 The CSS minify options are documented on the Google Code Wiki page of CSSMin:
 
-Filters: https://code.google.com/archive/p/cssmin/wikis/MinifierFilters.wiki
-Plugins: https://code.google.com/archive/p/cssmin/wikis/MinifierPlugins.wiki
+* Filters: https://code.google.com/archive/p/cssmin/wikis/MinifierFilters.wiki
+* Plugins: https://code.google.com/archive/p/cssmin/wikis/MinifierPlugins.wiki
 
 ## CSS Concat
 
