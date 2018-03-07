@@ -45,8 +45,6 @@ You can chose the option `Minify` to concatenate stylesheets using the CSSMin Mi
 
 The group filter enables to create bundles of stylesheets. The configuration is an array of JSON objects. Each object is a concat group and contains the required properties `match` (stylesheets to match) and `group` (object with group details).
 
-The plugin creates short CSS URLs by using a hash index. This means that the first concatenated stylesheets will have the filename `1.css`. The CDN option with CDN mask enables to load the stylesheets from `https://cdn.tld/1.css` resulting in the shortest URL possible.
-
 ![Concat Group Filter Editor](https://github.com/o10n-x/wordpress-css-optimization/blob/master/docs/images/concat-group-filter.png)
 
 `match` is an array with strings or JSON objects. The JSON object format contains the required property `string` (match string) and optional properties `regex` (boolean to enable regular expression match) and `exclude` (exclude from group). The match list determines which stylesheets are included in the group.
@@ -184,3 +182,7 @@ The plugin creates short CSS URLs by using a hash index. This means that the fir
 }
 ```
 </details>
+
+**Note** The plugin creates short CSS URLs by using a hash index. This means that the first concatenated stylesheets will have the filename `1.css`. The CDN option with CDN mask enables to load the stylesheets from `https://cdn.tld/1.css` resulting in the shortest URL possible.
+
+When you use automated concatenation and the content of stylesheets change on each request, the hash index could grow to a big number. You can reset the hash index from the admin bar menu under `CSS Cache`. When you clear the CSS cache, the hash index is reset to 0.
