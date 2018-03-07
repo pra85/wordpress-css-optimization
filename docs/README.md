@@ -222,7 +222,7 @@ The async load config filter enables to fine tune async load configuration for i
 
 `load_position` is a string with the two possible values `header` and `timing`. The option header will instantly start loading the stylesheet in the header (on javascript startup time) and timing will enable the `load_timing` option for further configuration.
 
-`load_timing` is an object consisting of the required property `type` and optional timing method related properties. The following timing methods are currently available
+`load_timing` is an object consisting of the required property `type` and optional timing method related properties. The following timing method types are currently available:
 
 * `domReady`
 * `requestIdleCallback`
@@ -236,6 +236,7 @@ The async load config filter enables to fine tune async load configuration for i
 * `media`
 	* `media` the Media Query to trigger loading of the stylesheet.
 
+`render_timing` is an object consisting of the required property `type` and optional timing method related properties (see `load_timing`). Render timing differs from load timing as it only affects the actual rendering (painting) of a stylesheet in the browser and it enables to unrender stylesheets, making it possible to change the design interactively based on a timing method. For optimization it also enables to start downloading stylesheets on domReady while rendering them based on a timing method.
 
 #### Example Async Load Configuration
 
@@ -247,6 +248,14 @@ The async load config filter enables to fine tune async load configuration for i
     "async": true,
     "media": "all",
     "noscript": true,
+    "load_position": "timing",
+    "load_timing": {
+    	"type": "domReady"
+	},
+	"render_timing": {
+		"type": "inview",
+		"selector": "#footer"
+	},
     "localStorage": {
       "max_size": 10000,
       "update_interval": 3600,
