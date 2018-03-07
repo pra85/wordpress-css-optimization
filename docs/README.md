@@ -608,3 +608,156 @@ Render timing differs from load timing as it only affects the actual rendering (
 </details>
 
 ---
+
+
+# Critical CSS / Above The Fold Optimization
+
+The plugin provides advanced tools to optimize the above the fold display of a page. The admin menu bar provides access to a above the fold optimization editor that provides a split view, toggle view, Critical CSS editor and more.
+
+![Critical CSS Editor](https://github.com/o10n-x/wordpress-css-optimization/blob/master/docs/images/critical-css-editor.png)
+
+Critical CSS files are stored in the theme directory `/wp-content/theme/YOURTHEME/critical-css/...`. You can manage the critical stylesheets via FTP or via the editor provided by the plugin.
+
+Each critical CSS stylesheet can have a partner JSON file to provide conditions for including the critical CSS on a page, e.g. `critical-css/frontpage-critical-css.json` for `critical-css/frontpage-critical-css.css`. 
+
+The conditional JSON is an array with 2 depth levels `[{condition},{condition}]` and `[[{condition},{condition}]]`. Depth level 1 provides in `OR` functionality while the second array level provides in `AND` functionality. 
+
+A condition object consists of the required property `method` which refers to a function, e.g. WordPress conditional functions such as `is_front_page` or `is_page` or your custom function and the optional properties `arguments` and `result`.
+
+`arguments` is a mixed value or array of arguments to pass to the method. A value will be passed as the first argument, while an array will be applied as multiple arguments. To apply an array of value as the first parameter, e.g. `is_post([1,5,19])` the arguments value needs to be passed as the first element of an array, `[[1,5,19]]`.
+
+`result` is a mixed value or array of the result to expect from the method. The default is `true` but it can be set to an array to match the result against multiple values in an array, e.g. to use `get_the_ID()` as conditional method and match against the result.
+
+#### Example Critical CSS Conditions Configuration
+
+```json
+[
+	{
+		"method": "is_page",
+		"arguments": [[1,6,19]]
+	},
+	{
+		"method": "is_front_page"
+	}
+]
+```
+
+<details/>
+  <summary>JSON schema for Critical CSS condition config</summary>
+
+```json
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "css-critical-conditions.json",
+    "title": "Match on any condition in array.",
+    "description": "Critical CSS conditions",
+    "type": "array",
+    "minItems": 1,
+    "items": {
+        "oneOf": [{
+            "$ref": "#/definitions/condition"
+        }, {
+            "title": "Match on all conditions in array.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/definitions/condition"
+            },
+            "uniqueItems": true
+        }]
+    },
+    "uniqueItems": true,
+
+    "definitions": {
+        "condition": {
+            "title": "Condition configuration object",
+            "type": "object",
+            "properties": {
+                "method": {
+                    "title": "The method to call.",
+                    "type": "string",
+                    "pattern": "^([\\A-Za-z0-9_-]+::)?[A-Za-z0-9_-]+$"
+                },
+                "arguments": {
+                    "title": "Arguments to apply to the method.",
+                    "default": "null",
+                    "oneOf": [{
+                        "type": "null"
+                    }, {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "oneOf": [{
+                                "type": "null"
+                            }, {
+                                "type": "boolean"
+                            }, {
+                                "type": "integer",
+                                "minimum": 1
+                            }, {
+                                "type": "string",
+                                "minLength": 1
+                            }, {
+                                "type": "array",
+                                "minItems": 1,
+                                "items": {
+                                    "oneOf": [{
+                                        "type": "null"
+                                    }, {
+                                        "type": "boolean"
+                                    }, {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }, {
+                                        "type": "string",
+                                        "minLength": 1
+                                    }, {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "items": {
+                                            "oneOf": [{
+                                                "type": "integer",
+                                                "minimum": 1
+                                            }, {
+                                                "type": "string",
+                                                "minLength": 1
+                                            }]
+                                        },
+                                        "uniqueItems": true
+                                    }]
+                                }
+                            }]
+                        }
+                    }]
+                },
+                "result": {
+                    "title": "The method result to match.",
+                    "oneOf": [{
+                        "type": "boolean",
+                        "default": true
+                    }, {
+                        "type": "integer"
+                    }, {
+                        "type": "string"
+                    }, {
+                        "title": "Match against an array.",
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "oneOf": [{
+                                "type": "integer"
+                            }, {
+                                "type": "string"
+                            }]
+                        },
+                        "uniqueItems": true
+                    }]
+                }
+            },
+            "required": ["method"]
+        }
+    }
+}
+```
+</details>
+
