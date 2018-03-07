@@ -10,9 +10,9 @@ Additional features can be requested on the [Github forum](https://github.com/o1
 
 ## Getting started
 
-1. CSS Code Optimization
-2. CSS Delivery Optimization
-3. Critical CSS / Above The Fold Optimization
+1. [CSS Code Optimization](#css-code-optimization)
+2. [CSS Delivery Optimization](#css-delivery-optimization)
+3. [Critical CSS / Above The Fold Optimization]()
 
 # CSS Code Optimization
 
@@ -24,7 +24,7 @@ The plugins provides the option to minify CSS code using [CSSMin](https://github
 
 #### CSS Minify Filter
 
-When the filter is enabled you can chose the filter mode `Include List` or `Exclude List`. The Include List option excludes all stylesheets by default and only minifies stylesheets on the list, while the Exclude List option includes all stylesheets by default except the stylesheets on the list.
+When the filter is enabled you can choose the filter mode `Include List` or `Exclude List`. The Include List option excludes all stylesheets by default and only minifies stylesheets on the list, while the Exclude List option includes all stylesheets by default except the stylesheets on the list.
 
 The filter list accepts parts of HTML stylesheet elements which makes it possible to match based on both CSS code and HTML attributes such as `id="stylesheet-id"`.
 
@@ -185,6 +185,6 @@ The group filter enables to create bundles of stylesheets. The configuration is 
 
 ---
 
-**Note:** The plugin creates short CSS URLs by using a hash index. This means that the first concatenated stylesheets will have the filename `1.css`. The CDN option with CDN mask enables to load the stylesheets from `https://cdn.tld/1.css` resulting in the shortest URL possible.
+**Note:** The plugin creates short CSS URLs by using a hash index. This means that the first concatenated stylesheet will have the filename `1.css`. The CDN option with CDN mask enables to load the stylesheets from `https://cdn.tld/1.css` resulting in the shortest URL possible.
 
 When you use automated concatenation and the content of stylesheets change on each request, the hash index could grow to a big number. You can reset the hash index from the admin bar menu under `CSS Cache`. When you clear the CSS cache, the hash index is reset to 0.
