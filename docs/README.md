@@ -30,7 +30,7 @@ The filter list accepts parts of HTML stylesheet elements which makes it possibl
 
 #### CSS Minify Options
 
-The CSS minify options are documented on the Google Code Wiki page of CSSMin:
+The CSS minify options are documented on the Google Code Wiki page of CSSMin.
 
 * Filters: https://code.google.com/archive/p/cssmin/wikis/MinifierFilters.wiki
 * Plugins: https://code.google.com/archive/p/cssmin/wikis/MinifierPlugins.wiki
@@ -44,6 +44,8 @@ You can chose the option `Minify` to concatenate stylesheets using the CSSMin Mi
 #### Concat Group Filter
 
 The group filter enables to create bundles of stylesheets. The configuration is an array of JSON objects. Each object is a concat group and contains the required properties `match` (stylesheets to match) and `group` (object with group details).
+
+The plugin creates short CSS URLs by using a hash index. This means that the first concatenated stylesheets will have the filename `1.css`. The CDN option with CDN mask enables to load the stylesheets from `https://cdn.tld/1.css` resulting in the shortest URL possible.
 
 ![Concat Group Filter Editor](https://github.com/o10n-x/wordpress-css-optimization/blob/master/docs/images/concat-group-filter.png)
 
