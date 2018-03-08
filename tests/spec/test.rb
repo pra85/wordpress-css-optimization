@@ -157,7 +157,7 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
 
       # delete
       accept_confirm do
-        find("tr[data-slug='css-optimization']").find('td.column-primary').find(".delete", match: :first).find("a").click
+        find("tr[data-slug='css-optimization']").find('td.column-primary').find("a.delete").click
       end
 
       expect(page).to have_content("was successfully deleted.");
