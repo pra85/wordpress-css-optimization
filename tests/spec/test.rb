@@ -156,11 +156,11 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
       expect(page).to have_content("Plugin deactivated.")
 
       # delete
-      accept_confirm do
-        find("tr[data-slug='css-optimization']").find('td.column-primary').find("a.delete").click
-      end
+      #accept_confirm do
+      #  find("tr[data-slug='css-optimization']").find('td.column-primary').find("a.delete").click
+      #end
 
-      expect(page).to have_content("was successfully deleted.");
+      #expect(page).to have_content("was successfully deleted.");
 
       #visit "#{uri}/wp-admin/plugin-install.php?tab=upload"
 
