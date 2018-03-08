@@ -168,6 +168,8 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
 
       attach_file('pluginzip', File.absolute_path('/tmp/wordpress/wp-content/plugins/wordpress-css-optimization.zip'))
 
+      click_button 'install-plugin-submit', match: :first
+
       expect(page).to have_content("Plugin installed successfully.");
 
       # activate
