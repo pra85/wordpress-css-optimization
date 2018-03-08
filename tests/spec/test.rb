@@ -151,13 +151,13 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
       expect(page).to have_content(/CSS Optimization/i)
 
       # deactivate
-      find("tr[data-slug='css-optimization']").find('td.column-primary').find(".deactivate").find("a").click
+      find("tr[data-slug='css-optimization']").find('td.column-primary').find(".deactivate", match: :first).find("a").click
 
       expect(page).to have_content("Plugin deactivated.")
 
       # delete
       accept_confirm do
-        find("tr[data-slug='css-optimization']").find('td.column-primary').find(".delete").find("a").click
+        find("tr[data-slug='css-optimization']").find('td.column-primary').find(".delete", match: :first).find("a").click
       end
 
       expect(page).to have_content("was successfully deleted.");
