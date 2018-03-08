@@ -17,6 +17,8 @@ require 'uri' # parse the url from wp-cli
 # Load our default RSPEC MATCHERS
 require_relative 'lib/matchers.rb'
 
+Capybara.save_path = "/tmp"
+
 RSpec.configure do |config|
   config.include Capybara::DSL
   config.verbose_retry = true
