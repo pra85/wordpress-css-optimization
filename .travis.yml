@@ -37,7 +37,8 @@ notifications:
     on_failure: always
 
 before_script:
-  echo 'upload_max_filesize = 10M\npost_max_size = 10M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/upload-size.ini
+  echo 'upload_max_filesize = 10M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/upload-size.ini
+  echo 'post_max_size = 10M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/post-size.ini
   - git clone https://github.com/o10n-x/wordpress-test-template wp-tests
   - wget https://github.com/o10n-x/wordpress-css-optimization/archive/master.zip 
   - bash wp-tests/bin/install-wp-tests.sh test root '' localhost $WP_VERSION
