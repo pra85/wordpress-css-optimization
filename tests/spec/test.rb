@@ -122,9 +122,11 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
         find("input[name='o10n[css.minify.concat.mediaqueries.enabled]']").set(true)
         find("input[name='o10n[css.minify.concat.inline.enabled]']").set(true)
 
+        find(".advanced-toggle-all").click;
+
       end
       
-      click_button 'is_submit'
+      click_button 'is_submit', match: :first
 
       expect(page).to have_content("Settings saved.")
 
@@ -149,13 +151,13 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
       expect(page).to have_content(/CSS Optimization/i)
 
       # deactivate
-      find("tr[data-slug='css-optimization']").find(".deactivate").find("a").click
+      find("tr[data-slug='css-optimization']").find('td.column-primary').find(".deactivate").find("a").click
 
       expect(page).to have_content("Plugin deactivated.")
 
       # delete
       accept_confirm do
-        find("tr[data-slug='css-optimization']").find(".delete").find("a").click
+        find("tr[data-slug='css-optimization']").find('td.column-primary').find(".delete").find("a").click
       end
 
       expect(page).to have_content("was successfully deleted.");
