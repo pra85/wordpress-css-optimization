@@ -116,8 +116,6 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
         # enable cloudfront page cache
         find("input[name='o10n[css.minify.enabled]']").set(true)
 
-        find(".advanced-toggle-all").click;
-
         find("input[name='o10n[css.minify.concat.enabled]']").set(true)
         find("input[name='o10n[css.minify.concat.minify]']").set(true)
 
