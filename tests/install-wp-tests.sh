@@ -17,7 +17,7 @@ DB_HOST=${4-localhost}
 
 WP_VERSION=${5-latest}
 
-PLUGIN_SLUG = $6
+PLUGIN_SLUG=$6
 
 # Use this for installing wordpress siteurl
 WP_TEST_URL=${WP_TEST_URL-http://localhost:12000}
