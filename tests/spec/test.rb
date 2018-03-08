@@ -148,7 +148,7 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
       end
       click_button 'wp-submit'
    
-      expect(page).to have_content(/HTTP\/2 Optimization/i)
+      expect(page).to have_content(/CSS Optimization/i)
 
       # deactivate
       find("tr[data-plugin='css-optimization/css-optimization.php']").find(".deactivate").find("a").click
