@@ -165,7 +165,7 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
       expect(page).to have_content("was successfully deleted.");
 
       visit "#{uri}/wp-admin/plugin-install.php?tab=upload"
-
+ 
       attach_file('pluginzip', File.absolute_path('/tmp/wordpress/wp-content/plugins/wordpress-css-optimization.zip'))
 
       click_button 'install-plugin-submit', match: :first
