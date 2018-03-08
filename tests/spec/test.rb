@@ -9,7 +9,7 @@ require 'capybara/poltergeist'
 require 'rspec'
 require 'rspec/retry'
 require 'capybara/rspec'
-#require 'capybara-screenshot/rspec'
+require 'capybara-screenshot/rspec'
 
  #
 require 'uri' # parse the url from wp-cli
@@ -157,10 +157,10 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
 
       # delete
       #accept_confirm do
-      #  find("tr[data-slug='css-optimization']").find('td.column-primary').find("a.delete").click
+        find("tr[data-slug='css-optimization']").find('td.column-primary').find("a.delete").click
       #end
 
-      #expect(page).to have_content("was successfully deleted.");
+      expect(page).to have_content("was successfully deleted.");
 
       #visit "#{uri}/wp-admin/plugin-install.php?tab=upload"
 
