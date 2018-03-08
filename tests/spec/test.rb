@@ -166,7 +166,7 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
 
       visit "#{uri}/wp-admin/plugin-install.php?tab=upload"
 
-      attach_file('pluginzip', File.absolute_path('/home/travis/build/o10n-x/master.zip'))
+      attach_file('pluginzip', File.absolute_path('/tmp/wordpress/wp-content/plugins/wordpress-css-optimization.zip'))
 
       expect(page).to have_content("Plugin installed successfully.");
 
