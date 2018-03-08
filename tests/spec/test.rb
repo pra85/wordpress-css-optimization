@@ -120,9 +120,7 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
 
         find("input[name='o10n[css.minify.concat.enabled]']").set(true)
         find("input[name='o10n[css.minify.concat.minify]']").set(true)
-        find("input[name='o10n[css.minify.concat.filter.enabled]']").set(true)
-        first("o10n[css.minify.concat.filter.config]']", visible: false).set("[{\"match\":[{\"string\":\"\\/.*.css\\/\",\"regex\":true}],\"group\":{\"title\":\"Group title\",\"key\":\"group-key-x\",\"id\":\"id-attr\"},\"minify\":true}]")
-        
+
         find("input[name='o10n[css.minify.concat.mediaqueries.enabled]']").set(true)
         find("input[name='o10n[css.minify.concat.inline.enabled]']").set(true)
 
