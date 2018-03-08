@@ -131,7 +131,7 @@ link_this_project() {
   case $WP_PROJECT_TYPE in
     'plugin' )
         #ln -s $FOLDER_PATH $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
-        cp -rf $FOLDER_PATH $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
+        cp -rf $FOLDER_PATH $WP_CORE_DIR/wp-content/plugins/
         php wp-cli.phar plugin activate $FOLDER_NAME --path=$WP_CORE_DIR
         ;;
     'theme' )
