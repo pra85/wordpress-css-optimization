@@ -132,7 +132,7 @@ link_this_project() {
     'plugin' )
         #ln -s $FOLDER_PATH $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
         cp -rf $FOLDER_PATH $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
-        chown -R apache:apache $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
+        chown -R www-data:www-data $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
         php wp-cli.phar plugin activate $PLUGIN_SLUG --path=$WP_CORE_DIR
         ;;
     'theme' )
