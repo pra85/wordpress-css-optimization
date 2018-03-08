@@ -39,8 +39,7 @@ notifications:
 before_script:
   - git clone https://github.com/o10n-x/wordpress-test-template wp-tests
   - wget https://github.com/o10n-x/wordpress-css-optimization/archive/master.zip 
-  - bash wp-tests/bin/install-wp-tests.sh test root '' localhost $WP_VERSION
-  - chown -R apache:apache ./
+  - bash tests/install-wp-tests.sh test root '' localhost $WP_VERSION css-optimization
 
 script:
   - phpunit
