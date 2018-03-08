@@ -21,7 +21,7 @@ $this->form_start(__('CSS Delivery Optimization', 'o10n'), 'css');
 
 <table class="form-table">
     <tr valign="top">
-        <th scope="row">Async Loading <a href="https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery?hl=" target="_blank" title="Recommendations by Google"><span class="dashicons dashicons-editor-help"></span></a></th>
+        <th scope="row">Async Loading <a href="https://github.com/o10n-x/wordpress-css-optimization/tree/master/docs" target="_blank" title="Recommendations by Google"><span class="dashicons dashicons-editor-help"></span></a></th>
         <td>
             <p class="poweredby">Powered by <a href="https://github.com/filamentgroup/loadCSS" target="_blank">loadCSS</a><span class="star"><a class="github-button" data-manual="1" href="https://github.com/filamentgroup/loadCSS" data-icon="octicon-star" data-show-count="true" aria-label="Star filamentgroup/loadCSS on GitHub">Star</a></span></p>
             <label><input type="checkbox" name="o10n[css.async.enabled]" data-json-ns="1" value="1"<?php $checked('css.async.enabled'); ?> /> Enabled</label>

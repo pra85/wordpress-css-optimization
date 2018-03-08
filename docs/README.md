@@ -634,7 +634,7 @@ A condition object consists of the required property `method` which refers to a 
 [
 	{
 		"method": "is_page",
-		"arguments": [[1,6,19]]
+		"arguments": [[1,5,19]]
 	},
 	{
 		"method": "is_front_page"
