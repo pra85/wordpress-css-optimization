@@ -23,7 +23,7 @@ matrix:
 
 addons:
   artifacts:
-    s3_bucket: o10n
+    s3_bucket: o10n 
     s3_region: "us-west-1"
     working_dir: screenshots
     paths:
