@@ -126,13 +126,13 @@ install_db() {
 
 link_this_project() {
   cd $DIR
-  local FOLDER_PATH=$(dirname $DIR)
+  local FOLDER_PATH=$DIR #$(dirname $DIR)
   local FOLDER_NAME=$(basename $FOLDER_PATH)
   case $WP_PROJECT_TYPE in
     'plugin' )
         #ln -s $FOLDER_PATH $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
         cp -rf $FOLDER_PATH $WP_CORE_DIR/wp-content/plugins/$FOLDER_NAME
-        php wp-cli.phar plugin activate $PLUGIN_SLUG --path=$WP_CORE_DIR
+        php wp-cli.phar plugin activate $FOLDER_NAME --path=$WP_CORE_DIR
         ;;
     'theme' )
         ln -s $FOLDER_PATH $WP_CORE_DIR/wp-content/themes/$FOLDER_NAME
