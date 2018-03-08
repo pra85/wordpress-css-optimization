@@ -30,6 +30,7 @@ addons:
 notifications:
   slack:
     rooms:
+      - o10n-x:J4WK8cWmvrEyQGtajZ0XcXC2#general
       - o10n-x:J4WK8cWmvrEyQGtajZ0XcXC2#testing
     on_success: always
     on_failure: always
