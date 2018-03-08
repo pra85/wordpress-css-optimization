@@ -21,6 +21,12 @@ matrix:
   allow_failures:
     - php: nightly
 
+addons:
+  artifacts:
+    s3_bucket: o10n
+    s3_region: "us-west-1"
+    working_dir: screenshots
+
 before_script:
   - git clone https://github.com/o10n-x/wordpress-test-template wp-tests
   - wget https://github.com/o10n-x/wordpress-css-optimization/archive/master.zip 
