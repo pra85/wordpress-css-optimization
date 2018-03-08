@@ -164,14 +164,14 @@ describe "wordpress: #{uri}/ - ", :type => :request, :js => true do
 
       visit "#{uri}/wp-admin/plugin-install.php?tab=upload"
 
-      attach_file('pluginzip', File.absolute_path('../../master.zip'))
+      #attach_file('pluginzip', File.absolute_path('../../master.zip'))
 
-      expect(page).to have_content("Plugin installed successfully.");
+      #expect(page).to have_content("Plugin installed successfully.");
 
       # activate
-      find(".button-primary").click
+      #find(".button-primary").click
 
-      expect(page).to have_content("Plugin activated.");
+      #expect(page).to have_content("Plugin activated.");
 
     end
 
