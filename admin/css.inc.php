@@ -40,22 +40,46 @@ $x = $get('css.minify.filter.enabled');
                     </select>
                 </span>
             </p>
-        </td>
-    </tr>
-    <tr valign="top" data-ns="css.minify.filter"<?php $visible('css.minify.filter', ($get('css.minify.filter.type') === 'include')); ?> data-ns-condition="css.minify.filter.type==include">
-        <th scope="row">&nbsp;</th>
-        <td style="padding-top:0px;">
-            <h5 class="h">&nbsp;Minify Include List</h5>
-            <textarea class="json-array-lines" name="o10n[css.minify.filter.include]" data-json-type="json-array-lines" placeholder="Exclude stylesheets by default. Include stylesheets on this list."><?php $line_array('css.minify.filter.include'); ?></textarea>
-            <p class="description">Enter (parts of) stylesheet <code>&lt;link&gt;</code> elements to minify, e.g. <code>bootstrap.min.css</code> or <code>id="stylesheet"</code>. One match string per line.</p>
-        </td>
-    </tr>
-    <tr valign="top" data-ns="css.minify.filter"<?php $visible('css.minify.filter', ($get('css.minify.filter.type') === 'exclude')); ?> data-ns-condition="css.minify.filter.type==exclude">
-        <th scope="row">&nbsp;</th>
-        <td style="padding-top:0px;">
-            <h5 class="h">&nbsp;Minify Exclude List</h5>
-            <textarea class="json-array-lines" name="o10n[css.minify.filter.exclude]" data-json-type="json-array-lines" placeholder="Include stylesheets by default. Exclude stylesheets on this list."><?php $line_array('css.minify.filter.exclude'); ?></textarea>
-            <p class="description">Enter (parts of) stylesheet <code>&lt;link&gt;</code> elements to exclude from minification. One match string per line.</p>
+
+            <div data-ns="css.minify.filter"<?php $visible('css.minify.filter', ($get('css.minify.filter.type') === 'include')); ?> data-ns-condition="css.minify.filter.type==include">
+                <h5 class="h">&nbsp;Minify Include List</h5>
+                <textarea class="json-array-lines" name="o10n[css.minify.filter.include]" data-json-type="json-array-lines" placeholder="Exclude stylesheets by default. Include stylesheets on this list."><?php $line_array('css.minify.filter.include'); ?></textarea>
+                <p class="description">Enter (parts of) stylesheet <code>&lt;link&gt;</code> elements to minify, e.g. <code>bootstrap.min.css</code> or <code>id="stylesheet"</code>. One match string per line.</p>
+            </div>
+            <div data-ns="css.minify.filter"<?php $visible('css.minify.filter', ($get('css.minify.filter.type') === 'exclude')); ?> data-ns-condition="css.minify.filter.type==exclude">
+                <h5 class="h">&nbsp;Minify Exclude List</h5>
+                <textarea class="json-array-lines" name="o10n[css.minify.filter.exclude]" data-json-type="json-array-lines" placeholder="Include stylesheets by default. Exclude stylesheets on this list."><?php $line_array('css.minify.filter.exclude'); ?></textarea>
+                <p class="description">Enter (parts of) stylesheet <code>&lt;link&gt;</code> elements to exclude from minification. One match string per line.</p>
+            </div>
+
+            <div data-ns="css.minify"<?php $visible('css.minify'); ?> class="suboption">
+                <label><input type="checkbox" value="1" name="o10n[css.minify.rebase.enabled]" data-json-ns="1"<?php $checked('css.minify.rebase.enabled'); ?> /> Rebase relative URI's in CSS</label>
+            </div>
+
+            <div data-ns="css.minify"<?php $visible('css.minify'); ?> class="suboption">
+                <label><input type="checkbox" value="1" name="o10n[css.minify.import.enabled]" data-json-ns="1"<?php $checked('css.minify.import.enabled'); ?> /> Process <code>@import</code> links</label>
+            </div>
+
+            <p data-ns="css.minify.import"<?php $visible('css.minify.import'); ?>>
+                <label><input type="checkbox" value="1" name="o10n[css.minify.import.filter.enabled]" data-json-ns="1"<?php $checked('css.minify.import.filter.enabled'); ?> /> Enable filter</label>
+                <span data-ns="css.minify.import.filter"<?php $visible('css.minify.import.filter'); ?>>
+                    <select name="o10n[css.minify.import.filter.type]" data-ns-change="css.minify.import.filter" data-json-default="<?php print esc_attr(json_encode('include')); ?>">
+                        <option value="include"<?php $selected('css.minify.import.filter.type', 'include'); ?>>Include List</option>
+                        <option value="exclude"<?php $selected('css.minify.import.filter.type', 'exclude'); ?>>Exclude List</option>
+                    </select>
+                </span>
+            </p>
+
+            <div data-ns="css.minify.import.filter"<?php $visible('css.minify.import.filter', ($get('css.minify.import.filter.type') === 'include')); ?> data-ns-condition="css.minify.import.filter.type==include">
+                <h5 class="h">&nbsp;@import Include List</h5>
+                <textarea class="json-array-lines" name="o10n[css.minify.import.filter.include]" data-json-type="json-array-lines" placeholder="Exclude stylesheet imports by default. Import stylesheets on this list."><?php $line_array('css.minify.import.filter.include'); ?></textarea>
+                <p class="description">Enter (parts of) <code>@import</code> URI's to process, e.g. <code>bootstrap.min.css</code>. One match string per line.</p>
+            </div>
+            <div data-ns="css.minify.import.filter"<?php $visible('css.minify.import.filter', ($get('css.minify.import.filter.type') === 'exclude')); ?> data-ns-condition="css.minify.import.filter.type==exclude">
+                <h5 class="h">&nbsp;@import Exclude List</h5>
+                <textarea class="json-array-lines" name="o10n[css.minify.import.filter.exclude]" data-json-type="json-array-lines" placeholder="Import stylesheets by default. Exclude stylesheets on this list."><?php $line_array('css.minify.import.filter.exclude'); ?></textarea>
+                <p class="description">Enter (parts of) <code>@import</code> URI's to exclude from processing, e.g. <code>bootstrap.min.css</code>. One match string per line.</p>
+            </div>
         </td>
     </tr>
 </table>

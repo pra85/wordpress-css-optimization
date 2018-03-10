@@ -141,6 +141,14 @@ class AdminViewCss extends AdminViewBase
                     'css.minify.filter.include' => 'newline_array',
                     'css.minify.filter.exclude' => 'newline_array',
 
+                    'css.minify.rebase.enabled' => 'bool',
+
+                    'css.minify.import.enabled' => 'bool',
+                    'css.minify.import.filter.enabled' => 'bool',
+                    'css.minify.import.filter.type' => 'string',
+                    'css.minify.import.filter.include' => 'newline_array',
+                    'css.minify.import.filter.exclude' => 'newline_array',
+
                     'css.minify.concat.enabled' => 'bool',
                     'css.minify.concat.minify' => 'bool',
 

@@ -50,6 +50,12 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 == Changelog ==
 
+= 0.0.21 =
+* Bugfix: concatenated stylesheets not loaded with async loading disabled.
+* Improved: strip CDATA from concatenated inline CSS.
+* Added: option to process `@import` links.
+* Added: option to rebase relative paths in CSS using [Net_URL2](http://pear.php.net/package/Net_URL2/).
+
 = 0.0.20 =
 * Bugfix: uninstaller (@jone11)
 * Improved Travis CI build test.

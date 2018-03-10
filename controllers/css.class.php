@@ -44,6 +44,11 @@ class Css extends Controller implements Controller_Interface
 
     private $localStorage = false; // default localStorage config
 
+    private $rebase_uris = false;
+    private $process_import = false;
+    private $process_import_filter = false;
+    private $process_import_filterType;
+
     /**
      * Load controller
      *
@@ -84,6 +89,15 @@ class Css extends Controller implements Controller_Interface
 
         // optimize CSS?
         if ($this->options->bool(['css.minify','css.async','css.proxy'])) {
+            $this->rebase_uris = $this->options->bool('css.minify.rebase.enabled');
+            $this->process_import = $this->options->bool('css.minify.import.enabled');
+            if ($this->process_import && $this->options->bool('css.minify.import.filter.enabled')) {
+                $this->process_import_filterType = $this->options->get('css.minify.import.filter.type');
+                $this->process_import_filter = $this->options->get('css.minify.import.filter.' . $this->process_import_filterType);
+                if (is_null($this->process_import_filter)) {
+                    $this->process_import_filter = array();
+                }
+            }
 
             // load responsive module
             $this->client->load_module('responsive');
@@ -285,8 +299,7 @@ class Css extends Controller implements Controller_Interface
 
             // concatenate
             if ($concat && (
-                isset($sheet['inline']) // inline
-                || (isset($sheet['minified']) && $sheet['minified']) // minified source
+                (isset($sheet['minified']) && $sheet['minified']) // minified source
             )) {
                 // concat group filter
                 if ($concat_filter) {
@@ -765,7 +778,7 @@ class Css extends Controller implements Controller_Interface
                 $media = (isset($concat_group_settings[$concat_group]['media'])) ? $concat_group_settings[$concat_group]['media'] : $media;
 
                 // load async (concatenated stylesheet)
-                if ($concat_group_async) {
+                if ($async && $concat_group_async) {
 
                     // add sheet to async list
                     $async_sheet = array(
@@ -1071,6 +1084,110 @@ class Css extends Controller implements Controller_Interface
     }
 
     /**
+     * Process @import links
+     */
+    final public function process_import_links($CSS, $base_href)
+    {
+        if (!$this->process_import) {
+            return $CSS;
+        }
+
+        // remove comments to prevent importing commented our CSS
+        $nocomment_css = preg_replace('#/\*.*\*/#Us', '', $CSS);
+
+        // check if CSS contains imports
+        if (stripos($nocomment_css, '@import') !== false) {
+            if (preg_match_all('/(?:@import)\s(?:url\()?\s?["\'](.*?)["\']\s?\)?(?:[^;]*);?/mi', $nocomment_css, $matches)) {
+
+                // process import links
+                foreach ($matches[1] as $n => $import) {
+
+                    // sanitize url
+                    $url = trim(preg_replace('#^.*((?:https?:|ftp:)?//.*\.css).*$#', '$1', trim($import)), " \t\n\r\0\x0B\"'");
+
+                    // apply filter
+                    if ($this->process_import_filter !== false) {
+                        if (!$this->tools->filter_list_match($url, $this->process_import_filterType, $this->process_import_filter)) {
+                            continue 1;
+                        }
+                    }
+
+                    // translate relative url
+                    $url = $this->url->rebase($url, $base_href);
+
+                    // detect local URL
+                    $local = $this->url->is_local($url);
+
+                    if ($local) {
+                        $cssText = file_get_contents($local);
+                    } else {
+
+                        // import external stylesheet
+                        if (!$this->url->valid_protocol($url)) {
+                            continue 1;
+                        }
+
+                        // download stylesheet
+                        try {
+                            $sheetData = $this->proxy->proxify('css', $url, 'filedata');
+                        } catch (HTTPException $err) {
+                            $sheetData = false;
+                        }
+
+                        // failed to download file or file is empty
+                        if (!$sheetData) {
+                            continue 1;
+                        }
+
+                        // css text
+                        $cssText = $sheetData[0];
+                    }
+
+                    // apply CSS filters before processing
+                    $cssText = $this->css_filters($cssText);
+
+                    // rebase relative links
+                    $cssText = $this->rebase_relative_links($cssText, $url);
+
+                    // process import links in imported sheet
+                    $cssText = $this->process_import_links($cssText, $url);
+
+                    // remove import rule from CSS
+                    $CSS = str_replace($matches[0][$n], $cssText, $CSS);
+                }
+            }
+        }
+
+        return $CSS;
+    }
+
+    /**
+     * Rebase relative links in CSS
+     */
+    final public function rebase_relative_links($CSS, $base_href)
+    {
+        if (!$this->rebase_uris) {
+            return $CSS;
+        }
+
+        // rebase relative links in CSS
+        if (strpos($CSS, 'url') !== false) {
+            if (preg_match_all('/url\s*\(\s*("|\')?\s*(?!data:)([^\)\s\'"]+)\s*("|\')?\s*\)/i', $CSS, $out)) {
+                foreach ($out[2] as $n => $url) {
+                    $translated_url = $this->url->rebase($url, $base_href);
+                    if ($translated_url !== $url) {
+                        $CSS = str_replace($out[0][$n], str_replace($url, $translated_url, $out[0][$n]), $CSS);
+                    }
+                }
+            }
+        }
+
+        return $CSS;
+    }
+
+    
+
+    /**
      * Extract stylesheets from HTML
      *
      * @param  string $HTML HTML source
@@ -1352,9 +1469,12 @@ class Css extends Controller implements Controller_Interface
 
             if (preg_match_all($style_regex, $HTML, $out)) {
                 foreach ($out[0] as $n => $style) {
-
-                    // @todo strip CDATA
                     $css = trim($out[2][$n]);
+
+                    // strip CDATA
+                    if (stripos($css, 'cdata') !== false) {
+                        $css = preg_replace('#^.*<!\[CDATA\[(?:\s*\*/)?(.*)(?://|/\*)\s*?\]\]>.*$#smi', '$1', $css);
+                    }
 
                     // ignore empty styles
                     if ($css === '') {
@@ -1396,13 +1516,21 @@ class Css extends Controller implements Controller_Interface
                     // extract media query
                     $media = $this->parse_media_attr($style);
 
-                    // result
-                    $this->css_elements[] = array(
+                    $sheet = array(
                         'inline' => true,
                         'css' => $css,
                         'tag' => $style,
-                        'media' => $media
+                        'media' => $media,
+                        'minify' => $minify
                     );
+
+                    // apply stylesheet minify filter
+                    if ($minify && $minify_filter) {
+                        $sheet['minify'] = $this->tools->filter_list_match($style, $minify_filterType, $minify_filter);
+                    }
+
+                    // result
+                    $this->css_elements[] = $sheet;
                 }
             }
         }
@@ -1418,82 +1546,94 @@ class Css extends Controller implements Controller_Interface
      */
     final private function minify_stylesheets()
     {
+
         // walk extracted CSS elements
         foreach ($this->css_elements as $n => $sheet) {
-
-            // skip inline <style>
-            if (isset($sheet['inline']) && $sheet['inline']) {
-                continue;
-            }
 
             // minify disabled
             if (!isset($sheet['minify']) || !$sheet['minify']) {
                 continue;
             }
 
-            // minify hash
-            $urlhash = $this->minify_hash($sheet['href']);
-
-            // detect local URL
-            $local = $this->url->is_local($sheet['href']);
-
-            $cache_file_hash = $proxy_file_meta = false;
-
-            // local URL, verify change based on content hash
-            if ($local) {
-
-                // get local file hash
-                $file_hash = md5_file($local);
-            } else { // remote URL
-
-                // invalid prefix
-                if (!$this->url->valid_protocol($sheet['href'])) {
-                    continue 1;
+            // skip inline <style>
+            if (isset($sheet['inline']) && $sheet['inline']) {
+                $url = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+                $base_href = $url;
+                if (substr($base_href, -1) === '/') {
+                    $base_href .= 'page.html';
                 }
+                $urlhash = md5($url . $sheet['css']);
+                $file_hash = md5($sheet['css']);
+                $cssText = $sheet['css'];
+                $local = false;
+            } else {
 
-                // try cache
-                if ($this->cache->exists('css', 'src', $urlhash) && (!$this->options->bool('css.clean-css.sourceMap') || $this->cache->exists('css', 'src', $urlhash, false, '.css.map'))) {
+                // minify hash
+                $urlhash = $this->minify_hash($sheet['href']);
+                $base_href = $sheet['href'];
 
-                    // verify content
-                    $proxy_file_meta = $this->proxy->meta('css', $script['src']);
-                    $cache_file_hash = $this->cache->meta('css', 'src', $urlhash, true);
+                // detect local URL
+                $local = $this->url->is_local($sheet['href']);
 
-                    if ($proxy_file_meta && $cache_file_hash && $proxy_file_meta[2] === $cache_file_hash) {
+                $cache_file_hash = $proxy_file_meta = false;
 
-                        // preserve cache file based on access
-                        $this->cache->preserve('css', 'src', $urlhash, (time() - 3600));
-                       
-                        // add minified path
-                        $this->css_elements[$n]['minified'] = $urlhash;
+                // local URL, verify change based on content hash
+                if ($local) {
 
-                        // update content in background using proxy (conditionl HEAD request)
-                        $this->proxy->proxify('css', $sheet['href']);
+                    // get local file hash
+                    $file_hash = md5_file($local);
+                } else {
+                    // remote URL
+
+                    // invalid prefix
+                    if (!$this->url->valid_protocol($sheet['href'])) {
                         continue 1;
                     }
-                }
 
-                // download stylesheet
-                try {
-                    $sheetData = $this->proxy->proxify('css', $sheet['href'], 'filedata');
-                } catch (HTTPException $err) {
-                    $sheetData = false;
-                }
+                    // try cache
+                    if ($this->cache->exists('css', 'src', $urlhash) && (!$this->options->bool('css.clean-css.sourceMap') || $this->cache->exists('css', 'src', $urlhash, false, '.css.map'))) {
 
-                // failed to download file or file is empty
-                if (!$sheetData) {
-                    continue 1;
-                }
+                        // verify content
+                        $proxy_file_meta = $this->proxy->meta('css', $sheet['href']);
+                        $cache_file_hash = $this->cache->meta('css', 'src', $urlhash, true);
 
-                // file hash
-                $file_hash = $sheetData[1][2];
-                $cssText = $sheetData[0];
+                        if ($proxy_file_meta && $cache_file_hash && $proxy_file_meta[2] === $cache_file_hash) {
+
+                            // preserve cache file based on access
+                            $this->cache->preserve('css', 'src', $urlhash, (time() - 3600));
+                           
+                            // add minified path
+                            $this->css_elements[$n]['minified'] = $urlhash;
+
+                            // update content in background using proxy (conditionl HEAD request)
+                            $this->proxy->proxify('css', $sheet['href']);
+                            continue 1;
+                        }
+                    }
+
+                    // download stylesheet
+                    try {
+                        $sheetData = $this->proxy->proxify('css', $sheet['href'], 'filedata');
+                    } catch (HTTPException $err) {
+                        $sheetData = false;
+                    }
+
+                    // failed to download file or file is empty
+                    if (!$sheetData) {
+                        continue 1;
+                    }
+
+                    // file hash
+                    $file_hash = $sheetData[1][2];
+                    $cssText = $sheetData[0];
+                }
             }
 
             // get content hash
             $cache_hash = $this->cache->meta('css', 'src', $urlhash, true);
 
             if ($cache_hash === $file_hash) {
-                
+
                 // preserve cache file based on access
                 $this->cache->preserve('css', 'src', $urlhash, (time() - 3600));
 
@@ -1531,13 +1671,18 @@ class Css extends Controller implements Controller_Interface
             // apply CSS filters before processing
             $cssText = $this->css_filters($cssText);
 
+            // rebase relative links such as background-url and @import links
+            $cssText = $this->rebase_relative_links($cssText, $base_href);
+
+            // process import links
+            $cssText = $this->process_import_links($cssText, $base_href);
+
             // target src cache dir
             $target_src_dir = $this->file->directory_url('css/src/' . $this->cache->hash_path($urlhash), 'cache', true);
 
             // CSS source
             $sources = array();
-            // $this->extract_filename($sheet['href'])
-            //$sheet['href'] = preg_replace(array('#\?.*$#i'), array(''), $sheet['href']);
+
             $sheet['href'] = $this->extract_filename($sheet['href']);
 
             $sources[$sheet['href']] = array(
@@ -1564,6 +1709,10 @@ class Css extends Controller implements Controller_Interface
 
                 // footer
                 $minified['css'] .= "\n/* @src ".$sheet['href']." */";
+
+                if (isset($sheet['inline']) && $sheet['inline']) {
+                    $this->css_elements[$n]['css'] = $minified['css'];
+                }
 
                 // store stylesheet
                 $cache_file_path = $this->cache->put(
