@@ -1,4 +1,6 @@
 <?php
+namespace O10n;
+
 /**
  * CssMin - A (simple) css minifier with benefits
  *
@@ -1391,8 +1393,9 @@ class CssParser
             if ($config !== false) {
                 $class = "Css" . $name . "ParserPlugin";
                 $config = is_array($config) ? $config : array();
-                if (class_exists($class)) {
-                    $this->plugins[] = new $class($this, $config);
+                if (class_exists(__NAMESPACE__ . '\\' . $class)) {
+                    $classname = __NAMESPACE__ . '\\' . $class;
+                    $this->plugins[] = new $classname($this, $config);
                 } else {
                     CssMin::triggerError(new CssError(__FILE__, __LINE__, __METHOD__ . ": The plugin <code>" . $name . "</code> with the class name <code>" . $class . "</code> was not found"));
                 }
@@ -1890,8 +1893,9 @@ class CssMinifier
             if ($config !== false) {
                 $class = "Css" . $name . "MinifierFilter";
                 $config = is_array($config) ? $config : array();
-                if (class_exists($class)) {
-                    $this->filters[] = new $class($this, $config);
+                if (class_exists(__NAMESPACE__ . '\\' . $class)) {
+                    $classname = __NAMESPACE__ . '\\' . $class;
+                    $this->filters[] = new $classname($this, $config);
                 } else {
                     CssMin::triggerError(new CssError(__FILE__, __LINE__, __METHOD__ . ": The filter <code>" . $name . "</code> with the class name <code>" . $class . "</code> was not found"));
                 }
@@ -1902,8 +1906,9 @@ class CssMinifier
             if ($config !== false) {
                 $class = "Css" . $name . "MinifierPlugin";
                 $config = is_array($config) ? $config : array();
-                if (class_exists($class)) {
-                    $this->plugins[] = new $class($this, $config);
+                if (class_exists(__NAMESPACE__ . '\\' . $class)) {
+                    $classname = __NAMESPACE__ . '\\' . $class;
+                    $this->plugins[] = new $classname($this, $config);
                 } else {
                     CssMin::triggerError(new CssError(__FILE__, __LINE__, __METHOD__ . ": The plugin <code>" . $name . "</code> with the class name <code>" . $class . "</code> was not found"));
                 }
@@ -2125,7 +2130,7 @@ class CssMin
         // Otherwise include all class files
         else {
             foreach (self::$classIndex as $class => $file) {
-                if (!class_exists($class)) {
+                if (!class_exists(__NAMESPACE__ . '\\' . $class)) {
                     require_once($file);
                 }
             }
@@ -3519,7 +3524,7 @@ class CssCompressExpressionValuesMinifierPlugin extends aCssMinifierPlugin
      */
     public function apply(aCssToken &$token)
     {
-        if (class_exists("JSMin") && stripos($token->Value, "expression(") !== false) {
+        if (class_exists(__NAMESPACE__ . '\\' . "JSMin") && stripos($token->Value, "expression(") !== false) {
             $value = $token->Value;
             $value = substr($token->Value, stripos($token->Value, "expression(") + 10);
             $value = trim(JSMin::minify($value));

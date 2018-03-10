@@ -1769,7 +1769,7 @@ class Css extends Controller implements Controller_Interface
         $this->last_used_minifier = false;
 
         // load PHP minifier
-        if (!class_exists('\CssMin')) {
+        if (!class_exists('O10n\CssMin')) {
             
             // autoloader
             require_once $this->core->modules('css')->dir_path() . 'lib/CssMin.php';
@@ -1782,13 +1782,13 @@ class Css extends Controller implements Controller_Interface
         }
         // minify
         try {
-            $minified = \CssMin::minify($CSS, $this->options->get('css.minify.cssmin.filters'), $this->options->get('css.minify.cssmin.plugins'));
+            $minified = CssMin::minify($CSS, $this->options->get('css.minify.cssmin.filters'), $this->options->get('css.minify.cssmin.plugins'));
         } catch (\Exception $err) {
             throw new Exception('PHP CssMin failed: ' . $err->getMessage(), 'css');
         }
         if (!$minified && $minified !== '') {
-            if (\CssMin::hasErrors()) {
-                throw new Exception('PHP CssMin failed: <ul><li>' . implode("</li><li>", \CssMin::getErrors()) . '</li></ul>', 'css');
+            if (CssMin::hasErrors()) {
+                throw new Exception('PHP CssMin failed: <ul><li>' . implode("</li><li>", CssMin::getErrors()) . '</li></ul>', 'css');
             } else {
                 throw new Exception('PHP CssMin failed: unknown error', 'css');
             }
