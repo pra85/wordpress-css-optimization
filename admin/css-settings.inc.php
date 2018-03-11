@@ -32,7 +32,7 @@ $profile_json = $dot->toJSON();
     <tr valign="top">
         <th scope="row">Config Profile</th>
         <td>
-            <p style="font-size:16px;">The configuration of this plugin is based on JSON schema's. The following JSON contains the full configuration of this plugin. You can backup and restore the configuration using the editor.</p>
+            <p style="font-size:16px;">The configuration of this plugin is based on a JSON schema. The following JSON contains the full configuration of this plugin. You can backup and restore the configuration using the editor.</p>
             <br />
             <div id="css"><div class="loading-json-editor"><?php print __('Loading JSON editor...', 'o10n'); ?></div></div>
             <input type="hidden" class="json" name="o10n[css]" data-json-type="json" data-json-editor-height="auto" data-json-editor-init="1" value="<?php print esc_attr($profile_json); ?>" />
