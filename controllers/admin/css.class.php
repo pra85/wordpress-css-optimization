@@ -69,7 +69,9 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
     {
         // instantiate controller
         return parent::construct($Core, array(
-            'AdminView'
+            'AdminView',
+            'options',
+            'AdminOptions'
         ));
     }
 
@@ -93,6 +95,9 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
 
         // reorder menu
         add_filter('custom_menu_order', array($this, 'reorder_menu'), PHP_INT_MAX);
+
+        // upgrade/install hooks
+        $this->upgrade();
     }
     
     /**
@@ -119,7 +124,6 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
                  'display'
              ));
         }
-
 
         // add menu entry to themes page
         add_submenu_page('themes.php', __('Advanced CSS Editor', 'o10n'), __('CSS Editor', 'o10n'), 'manage_options', 'o10n-css-editor', array(
@@ -207,6 +211,43 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
             $submenu['themes.php'] = $reordered;
         } else {
             $submenu['themes.php'][] = $editor_item;
+        }
+    }
+    
+    /**
+     * Upgrade plugin
+     */
+    final public function upgrade()
+    {
+        $version = $this->core->modules('css')->version();
+
+        if (version_compare($version, '0.0.27', '<=')) {
+
+            // convert critical css array to new format
+            $critical_css_files = $this->options->get('css.critical.files');
+            if ($critical_css_files && is_array($critical_css_files)) {
+                $updated = false;
+                foreach ($critical_css_files as $index => $config) {
+                    if (isset($config['filepath'])) {
+                        unset($critical_css_files[$index]['filepath']);
+                        $updated = true;
+                    }
+                    if (isset($config['conditions']) && is_array($config['conditions'])) {
+                        foreach ($config['conditions'] as $cindex => $condition) {
+                            if (is_array($condition) && isset($condition[0]) && is_numeric($condition[0])) {
+                                $critical_css_files[$index]['conditions'][$cindex] = $condition[1];
+                                $updated = true;
+                            }
+                        }
+                    }
+                }
+                if ($updated) {
+                    try {
+                        $this->AdminOptions->save(array('css.critical.files' => $critical_css_files));
+                    } catch (Exception $err) {
+                    }
+                }
+            }
         }
     }
 }
