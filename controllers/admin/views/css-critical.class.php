@@ -334,7 +334,7 @@ class AdminViewCssCritical extends AdminViewBase
             }
         }
 
-        $request->output_ok(false, array($conditions));
+        $request->output_ok(false, array($conditions, $filepath));
     }
 
     /**
@@ -495,6 +495,26 @@ class AdminViewCssCritical extends AdminViewBase
                 $value = 'bool';
             });
             $forminput->type_verify($cssmin_options);
+        }
+
+        // sort files
+        $sort_files = $forminput->get('sort');
+        if ($sort_files && !empty($sort_files)) {
+
+            // get file list
+            $critical_css_files = $this->options->get('css.critical.files');
+            foreach ($critical_css_files as $index => $file) {
+                if (isset($file['file']) && isset($sort_files[$file['file']]) && is_numeric($sort_files[$file['file']])) {
+                    $critical_css_files[$index]['priority'] = $sort_files[$file['file']];
+                }
+            }
+            
+            // save sorted files
+            try {
+                $this->AdminOptions->save(array('css.critical.files' => $critical_css_files));
+            } catch (Exception $err) {
+                $request->output_errors($err->getMessage());
+            }
         }
     }
 }

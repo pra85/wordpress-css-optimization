@@ -5,7 +5,7 @@ Tags: css, critical css, async, minify, editor, concat, minifier, concatenation,
 Requires at least: 4.0
 Requires PHP: 5.4
 Tested up to: 4.9.4
-Stable tag: 0.0.24
+Stable tag: 0.0.25
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,8 +50,13 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 == Changelog ==
 
+= 0.0.25 =
+* Bugfix: Critical CSS file index not working correctly after adding a file.
+* Bugfix: Critical CSS file sort not saving new sort order.
+* Improved Critical CSS add file form.
+
 = 0.0.24 =
-* Bugfix: potential CssMin.php conflicts when loaded via different minify plugin.
+* Bugfix: potential CssMin.php conflicts when using a different minify plugin.
 
 = 0.0.23 =
 * Core update (see changelog.txt)

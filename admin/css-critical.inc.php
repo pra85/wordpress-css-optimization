@@ -130,9 +130,9 @@ $files_list = $view->critical_css_files();
                     <td class="handle"><span class="grip"></span></td>
                     <td class="priority"><input type="number" value="" title="Priority (loading order)"></td>
                     <td class="file">
-                    <div class="conditions"><span></span><div class="json"></div></div>
+                        <div class="conditions"><span></span><div class="json"></div></div>
                         <a href="#" class="title"></a><span class="size">(<span></span>)</span>
-                        <p class="foot"><span class="filepath"></span> (<span class="date"></span>) - 10 conditions</p>
+                        <p class="foot"><span class="filepath"></span> (<span class="date"></span>)</p>
                     </td>
                     <td class="options">
                         <a href="#" class="button edit" title="Edit CSS">Edit</a>
@@ -177,12 +177,32 @@ $files_list = $view->critical_css_files();
     </table>
     <div class="submit">
         <input type="hidden" class="json" name="o10n[css.critical.files]" data-json-type="json-array" value="<?php print esc_attr($json('css.critical.files')); ?>" />
-        <div class="add_critical_file">
-            <input type="text" class="file" pattern="[A-Za-z0-9].css$" placeholder="Add file..." data-placeholder="Filename, e.g. critical-webfonts.css" data-invalid="Invalid filename. Enter a filename with the extension .css." id="critical_css_add_file">
-            <input type="text" class="hidden title" placeholder="Title (optional)" style="display:none;">
-            <input type="number" class="hidden priority" placeholder="Priority" data-invalid="Priority should be a positive integer." min="1" style="display:none;">
-            <button type="button" class="hidden button" style="display:none;">Add File</button>
-        </div>
+        <button type="button" class="button button-large" id="add_critical_css_file">Add file</button>
+    </div>
+</div>
+
+<div id="add_critical_css_file_form" style="display:none;">
+    <h3 style="margin-bottom:0px;">Add Critical CSS File</h3>
+    <table class="form-table">
+        <tr valign="top">
+            <td>
+                <h5 class="h">File Name</h5>
+                <input type="text" class="file" pattern="^[a-zA-Z0-9-_]+(\.css)?$" placeholder="Filename, e.g. frontpage.css or post-type.css" data-invalid="Invalid filename. Enter a filename with the extension .css." id="critical_css_add_file" style="width:300px;max-width:100%;">
+        
+                <div class="suboption">
+                    <h5 class="h">Title (optional)</h5>
+                    <input type="text" class="title" style="width:300px;max-width:100%;">
+                </div>
+                <div class="suboption">
+                    <h5 class="h">Priority</h5>
+                    <input type="number" class="priority" placeholder="Priority" data-invalid="Priority should be a positive integer." min="1" value="1" style="width:100px;max-width:100%;">
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class="submit">
+        <button type="button" class="button button-primary add">Add File</button>
+        <button type="button" class="button add-edit">Add File &amp; Edit</button>
         <span class="spinner" style="display:none;float:none;"></span>
         <span class="status"></span>
     </div>
@@ -227,8 +247,6 @@ $files_list = $view->critical_css_files();
         <button type="button" class="button cancel">Cancel</button>
     </div>
 </div>
-
-<br />
 
 <table class="form-table">
     <tr valign="top">
