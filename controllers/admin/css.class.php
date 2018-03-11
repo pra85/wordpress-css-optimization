@@ -53,6 +53,9 @@ class AdminCss extends ModuleAdminController implements Module_Admin_Controller_
                     'href' => '#csslint'
                 )
             )
+        ),
+        'settings' => array(
+            'title' => 'Settings'
         )
     );
 

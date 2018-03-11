@@ -139,21 +139,8 @@ class AdminViewCssCritical extends AdminViewBase
                 continue;
             }
 
-            $file['conditions_file'] = $critical_css_files[$index]['conditions_file'] = substr($file['file'], 0, -4) . '.json';
             $filepath = $criticalcss_dir . $file['file'];
             $critical_css_files[$index]['filepath'] = get_template() . '/critical-css/' . $file['file'];
-
-            // conditions
-            if (file_exists($criticalcss_dir . $file['conditions_file'])) {
-                try {
-                    $conditions = $this->json->parse(file_get_contents($criticalcss_dir . $file['conditions_file']), true);
-                } catch (\Exception $err) {
-                    $conditions = false;
-                }
-                if ($conditions) {
-                    $file['conditions'] = $critical_css_files[$index]['conditions'] = $conditions;
-                }
-            }
 
             // verify if file exists
             if (!file_exists($filepath)) {
@@ -295,25 +282,12 @@ class AdminViewCssCritical extends AdminViewBase
         // add new file
         $sanitized_css_files[$filename] = array(
             'file' => $filename,
-            'filepath' => $filepath,
             'priority' => intval($priority)
         );
         if ($title) {
             $sanitized_css_files[$filename]['title'] = $title;
         }
 
-        // condition file
-        $condition_file = $this->file->theme_directory(array('critical-css')) . substr($filename, 0, -4) . '.json';
-        if (file_exists($condition_file)) {
-            try {
-                $conditions = $this->json->parse(file_get_contents($condition_file), true);
-            } catch (\Exception $err) {
-                $conditions = false;
-            }
-            if ($conditions !== false) {
-                $sanitized_css_files[$filename]['conditions'] = array(filemtime($condition_file),$conditions);
-            }
-        }
 
         $critical_css_files = array_values($sanitized_css_files);
 
@@ -321,17 +295,6 @@ class AdminViewCssCritical extends AdminViewBase
             $this->AdminOptions->save(array('css.critical.files' => $critical_css_files));
         } catch (Exception $err) {
             $request->output_errors($err->getMessage());
-        }
-
-        // conditions
-        $conditions_file = substr($filename, 0, -4) . '.json';
-        $conditions = false;
-        if (file_exists($criticalcss_dir . $conditions_file)) {
-            try {
-                $conditions = $this->json->parse(file_get_contents($criticalcss_dir . $conditions_file), true);
-            } catch (\Exception $err) {
-                $conditions = false;
-            }
         }
 
         $request->output_ok(false, array($conditions, $filepath));
@@ -411,7 +374,6 @@ class AdminViewCssCritical extends AdminViewBase
             $request->output_errors('No file');
         }
         $filename = basename($filepath);
-        $css_filename = substr($filename, 0, -5) . '.css';
 
         // conditions
         $conditions = $request->data('conditions');
@@ -425,21 +387,6 @@ class AdminViewCssCritical extends AdminViewBase
             }
         }
         
-        // theme relative or absolute path?
-        $file = $this->file->theme_directory(array('critical-css')) . $filename;
-
-        // delete empty conditions
-        if (empty($conditions)) {
-            @unlink($file);
-        } else {
-            // write condition file
-            try {
-                $this->file->put_contents($file, json_encode($conditions));
-            } catch (\Exception $err) {
-                $request->output_errors($err->getMessage());
-            }
-        }
-
         // add condition file modified time to critical css files list
         $critical_css_files = $this->options->get('css.critical.files');
         if (!$critical_css_files || !is_array($critical_css_files)) {
@@ -447,13 +394,13 @@ class AdminViewCssCritical extends AdminViewBase
         }
 
         foreach ($critical_css_files as $index => $fileinfo) {
-            if ($fileinfo['file'] === $css_filename) {
+            if ($fileinfo['file'] === $filename) {
                 if (empty($conditions)) {
                     if (isset($critical_css_files[$index]['conditions'])) {
                         unset($critical_css_files[$index]['conditions']);
                     }
                 } else {
-                    $critical_css_files[$index]['conditions'] = array(filemtime($file),$conditions);
+                    $critical_css_files[$index]['conditions'] = $conditions;
                 }
             }
         }
@@ -505,7 +452,7 @@ class AdminViewCssCritical extends AdminViewBase
             $critical_css_files = $this->options->get('css.critical.files');
             foreach ($critical_css_files as $index => $file) {
                 if (isset($file['file']) && isset($sort_files[$file['file']]) && is_numeric($sort_files[$file['file']])) {
-                    $critical_css_files[$index]['priority'] = $sort_files[$file['file']];
+                    $critical_css_files[$index]['priority'] = intval($sort_files[$file['file']]);
                 }
             }
             

@@ -70,10 +70,12 @@ class Proxy extends Controller implements Controller_Interface
 
             // capture list
             $capture = array();
-            foreach ($proxyList as $url) {
-                $proxyHash = $this->proxify('css', $url, 'hash');
-                if ($proxyHash) {
-                    $capture[$url] = $proxyHash;
+            if (is_array($proxyList)) {
+                foreach ($proxyList as $url) {
+                    $proxyHash = $this->proxify('css', $url, 'hash');
+                    if ($proxyHash) {
+                        $capture[$url] = $proxyHash;
+                    }
                 }
             }
 
@@ -94,16 +96,18 @@ class Proxy extends Controller implements Controller_Interface
 
             // capture list
             $capture = array();
-            foreach ($proxyList as $url) {
-                if (is_array($url)) {
-                    if (!isset($url['url'])) {
-                        continue;
+            if (is_array($proxyList)) {
+                foreach ($proxyList as $url) {
+                    if (is_array($url)) {
+                        if (!isset($url['url'])) {
+                            continue;
+                        }
+                        $url = $url['url'];
                     }
-                    $url = $url['url'];
-                }
-                $proxyHash = $this->proxify('js', $url, 'hash');
-                if ($proxyHash) {
-                    $capture[$url] = $proxyHash;
+                    $proxyHash = $this->proxify('js', $url, 'hash');
+                    if ($proxyHash) {
+                        $capture[$url] = $proxyHash;
+                    }
                 }
             }
 

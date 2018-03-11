@@ -33,6 +33,7 @@ class AdminViewCss extends AdminViewBase
         return parent::construct($Core, array(
             'AdminForm',
             'AdminClient',
+            'AdminOptions',
             'json'
         ));
     }
@@ -109,6 +110,7 @@ class AdminViewCss extends AdminViewBase
                 case "critical":
                 case "editor":
                 case "intro":
+                case "settings":
                     $view_key = 'css-' . $tab;
                 break;
                 default:
@@ -342,6 +344,50 @@ class AdminViewCss extends AdminViewBase
                         'css.cdn.url' => 'string',
                         'css.cdn.mask' => 'string',
                     ));
+                }
+            break;
+            case "settings":
+
+                // CSS settings
+
+                $forminput->type_verify(array(
+                    'css' => 'json'
+                ));
+
+                // CSS profile
+                $css = $forminput->get('css');
+                if ($css) {
+
+                    // @todo improve
+                    $iterator = new \RecursiveIteratorIterator(
+                        new \RecursiveArrayIterator($css),
+                        \RecursiveIteratorIterator::SELF_FIRST
+                    );
+                    $path = [];
+                    $flatArray = [];
+
+                    $arrayVal = false;
+                    foreach ($iterator as $key => $value) {
+                        $path[$iterator->getDepth()] = $key;
+
+                        $dotpath = 'css.'.implode('.', array_slice($path, 0, $iterator->getDepth() + 1));
+                        if ($arrayVal && strpos($dotpath, $arrayVal) === 0) {
+                            continue 1;
+                        }
+
+                        if (!is_array($value) || empty($value) || array_keys($value)[0] === 0) {
+                            if (is_array($value) && array_keys($value)[0] === 0) {
+                                $arrayVal = $dotpath;
+                            } else {
+                                $arrayVal = false;
+                            }
+
+                            $flatArray[$dotpath] = $value;
+                        }
+                    }
+
+                    // replace all options
+                    $this->AdminOptions->save($flatArray, true);
                 }
             break;
             default:

@@ -31,7 +31,8 @@ class Criticalcss extends Controller implements Controller_Interface
             'file',
             'cache',
             'options',
-            'url'
+            'url',
+            'admin'
         ));
     }
 
@@ -106,115 +107,89 @@ class Criticalcss extends Controller implements Controller_Interface
         foreach ($files as $index => $file) {
 
             // index conditions
-            if (isset($file['conditions'])) {
+            if (isset($file['conditions']) && $file['conditions']) {
 
-                // verify if database is up to date
-                $conditions_file = $critical_css_directory . substr($file['file'], 0, -4) . '.json';
-                if (!file_exists($critical_css_directory)) {
-
-                    // conditions file removed
-                    unset($files[$index]['conditions']);
-                    $updated = true;
-                } else {
-
-                    // file modified, update conditions
-                    $modified_time = filemtime($conditions_file);
-                    if ($file['conditions'][0] !== $modified_time) {
-                        try {
-                            $conditions = $this->json->parse(file_get_contents($conditions_file), true);
-                        } catch (\Exception $err) {
-                            $conditions = false;
-                        }
-                        $files[$index]['conditions'][0] = $modified_time;
-                        $files[$index]['conditions'][1] = $conditions;
-                    } else {
-                        $conditions = $file['conditions'][1];
+                // process conditions
+                $match = false;
+                foreach ($file['conditions'] as $match_any) {
+                    if (!is_array($match_any)) {
+                        continue;
                     }
 
-                    if ($conditions) {
+                    // single condition
+                    if (!isset($match_any[0]) || !is_array($match_any[0])) {
+                        $match_all = array($match_any);
+                    } else {
+                        $match_all = $match_any;
+                    }
 
-                        // process conditions
-                        $match = false;
-                        foreach ($conditions as $match_any) {
-                            if (!is_array($match_any)) {
-                                continue;
-                            }
+                    $group_match = true;
+                    foreach ($match_all as $condition) {
 
-                            // single condition
-                            if (!isset($match_any[0]) || !is_array($match_any[0])) {
-                                $match_all = array($match_any);
+                        // method to call
+                        $method = (isset($condition['method'])) ? $condition['method'] : false;
+            
+                        // verify method
+                        if (!$method || !function_exists($method)) {
+                            $this->admin->add_notice('Critical CSS condition method does not exist in '.$this->file->safe_path($conditions_file).' ('.$method.').', 'css');
+                            continue;
+                        }
+
+                        // parameters to apply to method
+                        $arguments = (isset($condition['arguments'])) ? $condition['arguments'] : null;
+
+                        // result to expect from method
+                        $expected_result = (isset($condition['result'])) ? $condition['result'] : true;
+
+                        // call method
+                        if ($arguments === null) {
+                            if (isset($method_cache[$method])) {
+                                $result = $method_cache[$method];
                             } else {
-                                $match_all = $match_any;
+                                $result = $method_cache[$method] = call_user_func($method);
                             }
+                        } else {
+                            $arguments_key = json_encode($arguments);
 
-                            $group_match = true;
-                            foreach ($match_all as $condition) {
-
-                                // method to call
-                                $method = (isset($condition['method'])) ? $condition['method'] : false;
-                    
-                                // verify method
-                                if (!$method || !function_exists($method)) {
-                                    throw new Exception('Invalid condition method specified in '.$this->file->safe_path(O10N_CONFIG_DIR . $filename).' ('.$method.').', 'config');
+                            if (isset($method_cache[$method]) && isset($method_cache[$method][$arguments_key])) {
+                                $result = $method_cache[$method][$arguments_key];
+                            } else {
+                                if (!isset($method_param_cache[$method])) {
+                                    $method_param_cache[$method] = array();
                                 }
-
-                                // parameters to apply to method
-                                $arguments = (isset($condition['arguments'])) ? $condition['arguments'] : null;
-
-                                // result to expect from method
-                                $expected_result = (isset($condition['result'])) ? $condition['result'] : true;
-
-                                // call method
-                                if ($arguments === null) {
-                                    if (isset($method_cache[$method])) {
-                                        $result = $method_cache[$method];
-                                    } else {
-                                        $result = $method_cache[$method] = call_user_func($method);
-                                    }
-                                } else {
-                                    $arguments_key = json_encode($arguments);
-
-                                    if (isset($method_cache[$method]) && isset($method_cache[$method][$arguments_key])) {
-                                        $result = $method_cache[$method][$arguments_key];
-                                    } else {
-                                        if (!isset($method_param_cache[$method])) {
-                                            $method_param_cache[$method] = array();
-                                        }
-                                        $result = $method_param_cache[$method][$arguments_key] = call_user_func_array($method, $arguments);
-                                    }
-                                }
-
-                                // expected result is array of options
-                                if (is_array($expected_result)) {
-                                    if (!in_array($result, $expected_result, true)) {
-                                        $group_match = false; // group doesn't match
-                            
-                                        break 1; // stop processing condition (group)
-                                    }
-                                } else {
-                                    if ($result !== $expected_result) {
-                                        $group_match = false; // group doesn't match
-                            
-                                        break 1; // stop processing condition (group)
-                                    }
-                                }
-                            }
-
-                            if ($group_match) {
-                                $match = true; // match found
-                    
-                                break 1; // stop processing conditions
+                                $result = $method_param_cache[$method][$arguments_key] = call_user_func_array($method, $arguments);
                             }
                         }
 
-                        if ($match) {
-                            $active_files[] = $file;
+                        // expected result is array of options
+                        if (is_array($expected_result)) {
+                            if (!in_array($result, $expected_result, true)) {
+                                $group_match = false; // group doesn't match
+                    
+                                break 1; // stop processing condition (group)
+                            }
+                        } else {
+                            if ($result !== $expected_result) {
+                                $group_match = false; // group doesn't match
+                    
+                                break 1; // stop processing condition (group)
+                            }
                         }
-                        continue 1;
+                    }
+
+                    if ($group_match) {
+                        $match = true; // match found
+            
+                        break 1; // stop processing conditions
                     }
                 }
+
+                if ($match) {
+                    $active_files[] = $file;
+                }
+            } else {
+                $active_files[] = $file;
             }
-            $active_files[] = $file;
         }
 
         if ($updated) {
@@ -417,7 +392,7 @@ class Criticalcss extends Controller implements Controller_Interface
         $this->last_used_minifier = false;
 
         // load PHP minifier
-        if (!class_exists('\CssMin')) {
+        if (!class_exists('O10n\CssMin')) {
             
             // autoloader
             require_once $this->core->modules('css')->dir_path() . 'lib/CssMin.php';
@@ -425,12 +400,12 @@ class Criticalcss extends Controller implements Controller_Interface
 
         // minify
         try {
-            $minified = \CssMin::minify($CSS, $this->options->get('css.critical.minify.cssmin.filters'), $this->options->get('css.critical.minify.cssmin.plugins'));
+            $minified = CssMin::minify($CSS, $this->options->get('css.critical.minify.cssmin.filters'), $this->options->get('css.critical.minify.cssmin.plugins'));
         } catch (\Exception $err) {
             throw new Exception('PHP CssMin failed: ' . $err->getMessage(), 'css');
         }
         if (!$minified && $minified !== '') {
-            if (\CssMin::hasErrors()) {
+            if (CssMin::hasErrors()) {
                 throw new Exception('PHP CssMin failed: <ul><li>' . implode("</li><li>", \CssMin::getErrors()) . '</li></ul>', 'css');
             } else {
                 throw new Exception('PHP CssMin failed: unknown error', 'css');

@@ -49,6 +49,8 @@ class Css extends Controller implements Controller_Interface
     private $process_import_filter = false;
     private $process_import_filterType;
 
+    private $debug_mode = false;
+
     /**
      * Load controller
      *
@@ -83,6 +85,9 @@ class Css extends Controller implements Controller_Interface
         if (!$this->env->is_optimization()) {
             return;
         }
+
+        // debug modus
+        $this->debug_mode = (defined('O10N_DEBUG') && O10N_DEBUG);
 
         // add module definitions
         $this->client->add_module_definitions($this->client_modules, $this->client_module_dependencies);
@@ -240,9 +245,6 @@ class Css extends Controller implements Controller_Interface
         if (empty($this->css_elements)) {
             return $HTML;
         }
-
-        // debug modus
-        $debug = (defined('O10N_DEBUG') && O10N_DEBUG);
 
         // sheet urls
         $sheet_urls = array();
@@ -956,7 +958,7 @@ class Css extends Controller implements Controller_Interface
                     // add to async list
                     $async_list[] = $async_sheet;
 
-                    if ($debug) {
+                    if ($this->debug_mode) {
                         $async_ref_list[$sheet['url']] = $sheet['original_url'];
                     }
                 }
@@ -965,7 +967,7 @@ class Css extends Controller implements Controller_Interface
                 $this->client->set_config('css', 'async', $async_list);
 
                 // add references
-                if ($debug) {
+                if ($this->debug_mode) {
                     $this->client->set_config('css', 'debug_ref', $async_ref_list);
                 }
 
