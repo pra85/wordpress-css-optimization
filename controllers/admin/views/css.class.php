@@ -348,14 +348,8 @@ class AdminViewCss extends AdminViewBase
             break;
             case "settings":
 
-                // CSS settings
-
-                $forminput->type_verify(array(
-                    'css' => 'json'
-                ));
-
                 // CSS profile
-                $css = $forminput->get('css');
+                $css = $forminput->get('css', 'json-array');
                 if ($css) {
 
                     // @todo improve

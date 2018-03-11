@@ -315,11 +315,13 @@ submit_button(__('Save'), 'primary large', 'is_submit', false);
     </tr>
 
     <tr valign="top" data-ns="css.proxy.capture"<?php $visible('css.proxy.capture'); ?>>
-        <th scope="row">&nbsp;</th>
+        <th scope="row">&nbsp;</th> 
         <td style="padding-top:0px;">
             <h5 class="h">&nbsp;Proxy Capture List</h5>
             <div id="css-proxy-capture-list"><div class="loading-json-editor"><?php print __('Loading JSON editor...', 'o10n'); ?></div></div>
-            <input type="hidden" class="json" name="o10n[css.proxy.capture.list]" data-json-type="json-array" data-json-editor-compact="1" data-json-editor-init="1" value="<?php print esc_attr($json('css.proxy.capture.list')); ?>" />
+            <input type="hidden" class="json" name="o10n[css.proxy.capture.list]" data-json-type="json-array" data-json-editor-init="1" value="<?php print esc_attr($json('css.proxy.capture.list')); ?>" />
+            <p class="description">Enter a JSON array with stylesheet URL strings or JSON objects with a regular expression match.</p>
+            <div class="info_yellow"><strong>Example:</strong> <code id="css_proxy_capture_example" class="clickselect" data-example-text="show string" title="<?php print esc_attr('Click to select', 'optimization'); ?>" style="cursor:copy;">["https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css", "https://domain.com/style.css"]</code> (<a href="javascript:void(0);" data-example="css_proxy_capture_example" data-example-html="<?php print esc_attr(__('[{"match": "jquery\\\\.mobile\\\\.min\\\\.css\\\\?[0-9]+/i", "regex": true, "url": "https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" }]', 'optimization')); ?>">show regular expression</a>)</div>
         </td>
     </tr>
     <tr valign="top">
