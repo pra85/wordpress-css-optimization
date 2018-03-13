@@ -5,7 +5,7 @@ Tags: css, critical css, async, minify, editor, concat, minifier, concatenation,
 Requires at least: 4.0
 Requires PHP: 5.4
 Tested up to: 4.9.4
-Stable tag: 0.0.35
+Stable tag: 0.0.36
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 
 == Changelog ==
+
+= 0.0.36 =
+* Bugfix: localStorage HEAD update not working.
 
 = 0.0.35 =
 * Bugfix: JSON profile editor does not delete options when removed from JSON.

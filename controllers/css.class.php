@@ -932,7 +932,7 @@ class Css extends Controller implements Controller_Interface
                             if ($sheet['localStorage']['head_update']) {
                                 $localStorage[$this->client->config_index('css', 'localStorage_head_update')] = $sheet['localStorage']['head_update'];
                             }
-
+ 
                             $async_sheet[($index + 2)] = $localStorage;
                         } else {
                             $async_sheet[($index + 2)] = ($sheet['localStorage']) ? 1 : 0;
