@@ -100,7 +100,7 @@ class Css extends Controller implements Controller_Interface
             if ($this->options->bool('css.minify')) {
                 $this->minify_filters = array(
                     "ImportImports" => $this->options->bool('css.minify.cssmin.filters.ImportImports'),
-                    "RemoveComments" => (($this->options->bool('css.minify.cssmin.filters.ImportImports.enabled')) ? $this->options->get('css.minify.cssmin.filters.ImportImports.whitelist') : false),
+                    "RemoveComments" => (($this->options->bool('css.minify.cssmin.filters.RemoveComments.enabled')) ? array('whitelist' => $this->options->get('css.minify.cssmin.filters.RemoveComments.whitelist')) : false),
                     "RemoveEmptyRulesets" => $this->options->bool('css.minify.cssmin.filters.RemoveEmptyRulesets'),
                     "RemoveEmptyAtBlocks" => $this->options->bool('css.minify.cssmin.filters.RemoveEmptyAtBlocks'),
                     "ConvertLevel3Properties" => $this->options->bool('css.minify.cssmin.filters.ConvertLevel3Properties'),
