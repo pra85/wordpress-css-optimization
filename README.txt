@@ -5,7 +5,7 @@ Tags: css, critical css, async, minify, editor, concat, minifier, concatenation,
 Requires at least: 4.0
 Requires PHP: 5.4
 Tested up to: 4.9.4
-Stable tag: 0.0.30
+Stable tag: 0.0.35
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,22 @@ Documentation is available on [Github](https://github.com/o10n-x/wordpress-css-o
 
 
 == Changelog ==
+
+= 0.0.35 =
+* Bugfix: JSON profile editor does not delete options when removed from JSON.
+
+= 0.0.34 =
+* Core update (see changelog.txt)
+
+= 0.0.33 =
+* Bugfix: JSON profile editor overwrites settings.
+
+= 0.0.32 =
+* Bugfix: JSON profile editor not saving empty array values correctly.
+
+= 0.0.31 =
+* Bugfix: Settings not saved correctly when all options are disabled.
+* Bugfix: CSS code search & replace not saved.
 
 = 0.0.30 =
 * Bugfix: External script proxy capture client not compatible with regex match.

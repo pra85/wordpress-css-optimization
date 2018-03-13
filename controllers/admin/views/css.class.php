@@ -33,6 +33,7 @@ class AdminViewCss extends AdminViewBase
         return parent::construct($Core, array(
             'AdminForm',
             'AdminClient',
+            'options',
             'AdminOptions',
             'json'
         ));
@@ -138,46 +139,82 @@ class AdminViewCss extends AdminViewBase
                 $forminput->type_verify(array(
                     'css.minify.enabled' => 'bool',
 
-                    'css.minify.filter.enabled' => 'bool',
-                    'css.minify.filter.type' => 'string',
-                    'css.minify.filter.include' => 'newline_array',
-                    'css.minify.filter.exclude' => 'newline_array',
-
-                    'css.minify.rebase.enabled' => 'bool',
-
-                    'css.minify.import.enabled' => 'bool',
-                    'css.minify.import.filter.enabled' => 'bool',
-                    'css.minify.import.filter.type' => 'string',
-                    'css.minify.import.filter.include' => 'newline_array',
-                    'css.minify.import.filter.exclude' => 'newline_array',
-
-                    'css.minify.concat.enabled' => 'bool',
-                    'css.minify.concat.minify' => 'bool',
-
-                    'css.minify.concat.filter.enabled' => 'bool',
-                    'css.minify.concat.filter.type' => 'string',
-                    'css.minify.concat.filter.config' => 'json-array',
-
-                    'css.minify.concat.mediaqueries.enabled' => 'bool',
-                    'css.minify.concat.mediaqueries.filter.enabled' => 'bool',
-                    'css.minify.concat.mediaqueries.filter.type' => 'string',
-                    'css.minify.concat.mediaqueries.filter.include' => 'newline_array',
-                    'css.minify.concat.mediaqueries.filter.exclude' => 'newline_array',
-
-                    'css.minify.concat.inline.enabled' => 'bool',
-                    'css.minify.concat.inline.filter.enabled' => 'bool',
-                    'css.minify.concat.inline.filter.type' => 'string',
-                    'css.minify.concat.inline.filter.include' => 'newline_array',
-                    'css.minify.concat.inline.filter.exclude' => 'newline_array',
-
-                    'css.replace' => 'json-array',
-
-                    'css.url_filter.enabled' => 'bool',
-                    'css.url_filter.config' => 'json-array'
+                    'css.url_filter.enabled' => 'bool'
                 ));
 
-                // CSSmin settings
+
+                // minify enabled
                 if ($forminput->bool('css.minify.enabled')) {
+                    $forminput->type_verify(array(
+                        'css.minify.filter.enabled' => 'bool',
+
+                        'css.minify.rebase.enabled' => 'bool',
+                        'css.replace' => 'json-array',
+
+                        'css.minify.import.enabled' => 'bool',
+                        'css.minify.import.filter.enabled' => 'bool',
+
+                        'css.minify.concat.enabled' => 'bool',
+                        'css.minify.concat.minify' => 'bool',
+
+                        'css.minify.concat.filter.enabled' => 'bool',
+
+                        'css.minify.concat.mediaqueries.enabled' => 'bool',
+
+                        'css.minify.concat.inline.enabled' => 'bool',
+                    ));
+
+                    // minify filter
+                    if ($forminput->bool('css.minify.filter.enabled')) {
+                        $forminput->type_verify(array(
+                            'css.minify.filter.type' => 'string',
+                            'css.minify.filter.include' => 'newline_array',
+                            'css.minify.filter.exclude' => 'newline_array'
+                        ));
+                    }
+
+                    // minify import filter
+                    if ($forminput->bool('css.minify.import.filter.enabled')) {
+                        $forminput->type_verify(array(
+                            'css.minify.import.filter.type' => 'string',
+                            'css.minify.import.filter.include' => 'newline_array',
+                            'css.minify.import.filter.exclude' => 'newline_array'
+                        ));
+                    }
+
+                    // concat enabled
+                    if ($forminput->bool('css.minify.concat.enabled')) {
+
+                        // concat filter
+                        if ($forminput->bool('css.minify.concat.filter.enabled')) {
+                            $forminput->type_verify(array(
+                                'css.minify.concat.filter.type' => 'string',
+                                'css.minify.concat.filter.config' => 'json-array'
+                            ));
+                        }
+
+                        // concat media query filter
+                        if ($forminput->bool('css.minify.concat.mediaqueries.filter.enabled')) {
+                            $forminput->type_verify(array(
+                                'css.minify.concat.mediaqueries.filter.enabled' => 'bool',
+                                'css.minify.concat.mediaqueries.filter.type' => 'string',
+                                'css.minify.concat.mediaqueries.filter.include' => 'newline_array',
+                                'css.minify.concat.mediaqueries.filter.exclude' => 'newline_array'
+                            ));
+                        }
+
+                        // concat inline filter
+                        if ($forminput->bool('css.minify.concat.inline.filter.enabled')) {
+                            $forminput->type_verify(array(
+                                'css.minify.concat.inline.filter.enabled' => 'bool',
+                                'css.minify.concat.inline.filter.type' => 'string',
+                                'css.minify.concat.inline.filter.include' => 'newline_array',
+                                'css.minify.concat.inline.filter.exclude' => 'newline_array'
+                            ));
+                        }
+                    }
+
+                    // CSSmin settings
                     $filters_options = array_keys((array)$this->AdminForm->schema_option('css.minify.cssmin.filters')->properties);
                     array_walk($filters_options, function (&$value, $key) {
                         $value = 'css.minify.cssmin.filters.' . $value;
@@ -191,33 +228,41 @@ class AdminViewCss extends AdminViewBase
                         $value = 'bool';
                     });
                     $forminput->type_verify($cssmin_options);
-                }
 
-                // verify search & replace
-                $cssreplace = $forminput->get('css.replace', 'json-array', array());
-                if (!empty($cssreplace)) {
-                    $searchreplace = array();
-                    $position = 0;
-                    foreach ($cssreplace as $cnf) {
-                        if (!is_array($cnf) || !isset($cnf['search']) || !isset($cnf['replace'])) {
-                            continue;
-                        }
-                        $position++;
-                        if (isset($cnf['regex'])) {
-                            // exec preg_match on null
-                            $valid = @preg_match($cnf['search'], null);
-                            $error = $this->is_preg_error();
-                            if ($valid === false || $error) {
-                                throw new Exception('<code>'.esc_html($cnf['search']).'</code> is an invalid regular expression and has been removed.' . (($error) ? '<br /><p>Error: '.$error.'</p>' : ''), 'settings');
+                    // verify search & replace
+                    $cssreplace = $forminput->get('css.replace', 'json-array', array());
+                    if (!empty($cssreplace)) {
+                        $searchreplace = array();
+                        $position = 0;
+                        foreach ($cssreplace as $cnf) {
+                            if (!is_array($cnf) || !isset($cnf['search']) || !isset($cnf['replace'])) {
+                                continue;
                             }
+                            $position++;
+                            if (isset($cnf['regex'])) {
+                                // exec preg_match on null
+                                $valid = @preg_match($cnf['search'], null);
+                                $error = $this->is_preg_error();
+                                if ($valid === false || $error) {
+                                    throw new Exception('<code>'.esc_html($cnf['search']).'</code> is an invalid regular expression and has been removed.' . (($error) ? '<br /><p>Error: '.$error.'</p>' : ''), 'settings');
+                                }
+                            }
+                            $searchreplace[] = $cnf;
                         }
-                        $searchreplace[] = $cnf;
+                        $cssreplace = $searchreplace;
                     }
-                    $cssreplace = $searchreplace;
+
+                    // set search & replace
+                    $forminput->set('css.replace', $cssreplace);
                 }
 
-                // set search & replace
-                $forminput->set('css.replace', $cssreplace);
+                // url filter
+                if ($forminput->bool('css.url_filter.enabled')) {
+                    $forminput->type_verify(array(
+                        'css.url_filter.config' => 'json-array'
+                    ));
+                }
+
             break;
             case "delivery":
 
@@ -225,88 +270,110 @@ class AdminViewCss extends AdminViewBase
 
                 $forminput->type_verify(array(
                     'css.async.enabled' => 'bool',
-                    'css.async.rel_preload' => 'bool',
-                    'css.async.noscript' => 'bool',
-
-                    'css.async.filter.enabled' => 'bool',
-                    'css.async.filter.type' => 'string',
-                    'css.async.filter.config' => 'json-array',
-
-                    'css.async.load_position' => 'string',
-                    'css.async.render_timing.enabled' => 'bool',
 
                     'css.http2_push.enabled' => 'bool',
-
-                    'css.async.localStorage.enabled' => 'bool',
 
                     'css.proxy.enabled' => 'bool',
 
                     'css.cdn.enabled' => 'bool'
                 ));
 
-                // load timing
-                if ($forminput->get('css.async.load_position') === 'timing') {
+                // async
+                if ($forminput->bool('css.async.enabled')) {
                     $forminput->type_verify(array(
-                        'css.async.load_timing.type' => 'string'
+                        'css.async.rel_preload' => 'bool',
+                        'css.async.noscript' => 'bool',
+
+                        'css.async.render_timing.enabled' => 'bool',
+
+                        'css.async.localStorage.enabled' => 'bool',
+
+                        'css.async.filter.enabled' => 'bool',
+                        'css.async.filter.type' => 'string',
+                        'css.async.load_position' => 'string'
                     ));
 
-                    if ($forminput->get('css.async.load_timing.type') === 'requestAnimationFrame') {
+                    // async filter
+                    if ($forminput->bool('css.async.filter.enabled')) {
                         $forminput->type_verify(array(
-                            'css.async.load_timing.frame' => 'int-empty'
+                            'css.async.filter.config' => 'json-array'
                         ));
                     }
 
-                    if ($forminput->get('css.async.load_timing.type') === 'requestIdleCallback') {
+                    // load timing
+                    if ($forminput->get('css.async.load_position') === 'timing') {
                         $forminput->type_verify(array(
-                            'css.async.load_timing.timeout' => 'int-empty',
-                            'css.async.load_timing.setTimeout' => 'int-empty'
+                            'css.async.load_timing.type' => 'string'
                         ));
+
+                        if ($forminput->get('css.async.load_timing.type') === 'requestAnimationFrame') {
+                            $forminput->type_verify(array(
+                                'css.async.load_timing.frame' => 'int-empty'
+                            ));
+                        }
+
+                        if ($forminput->get('css.async.load_timing.type') === 'requestIdleCallback') {
+                            $forminput->type_verify(array(
+                                'css.async.load_timing.timeout' => 'int-empty',
+                                'css.async.load_timing.setTimeout' => 'int-empty'
+                            ));
+                        }
+                
+                        if ($forminput->get('css.async.load_timing.type') === 'inview') {
+                            $forminput->type_verify(array(
+                                'css.async.load_timing.selector' => 'string',
+                                'css.async.load_timing.offset' => 'int-empty'
+                            ));
+                        }
+
+                        if ($forminput->get('css.async.load_timing.type') === 'media') {
+                            $forminput->type_verify(array(
+                                'css.async.load_timing.media' => 'string'
+                            ));
+                        }
                     }
+
+                    // render timing
+                    if ($forminput->bool('css.async.render_timing.enabled')) {
+                        $forminput->type_verify(array(
+                            'css.async.render_timing.type' => 'string'
+                        ));
+
+                        if ($forminput->get('css.async.render_timing.type') === 'requestAnimationFrame') {
+                            $forminput->type_verify(array(
+                                'css.async.render_timing.frame' => 'int-empty'
+                            ));
+                        }
+
+                        if ($forminput->get('css.async.render_timing.type') === 'requestIdleCallback') {
+                            $forminput->type_verify(array(
+                                'css.async.render_timing.timeout' => 'int-empty',
+                                'css.async.render_timing.setTimeout' => 'int-empty'
+                            ));
+                        }
             
-                    if ($forminput->get('css.async.load_timing.type') === 'inview') {
+                        if ($forminput->get('css.async.render_timing.type') === 'inview') {
+                            $forminput->type_verify(array(
+                                'css.async.render_timing.selector' => 'string',
+                                'css.async.render_timing.offset' => 'int-empty'
+                            ));
+                        }
+
+                        if ($forminput->get('css.async.render_timing.type') === 'media') {
+                            $forminput->type_verify(array(
+                                'css.async.render_timing.media' => 'string'
+                            ));
+                        }
+                    }
+
+                    // localStorage
+                    if ($forminput->bool('css.async.localStorage.enabled')) {
                         $forminput->type_verify(array(
-                            'css.async.load_timing.selector' => 'string',
-                            'css.async.load_timing.offset' => 'int-empty'
+                            'css.async.localStorage.max_size' => 'int',
+                            'css.async.localStorage.expire' => 'int',
+                            'css.async.localStorage.update_interval' => 'int',
+                            'css.async.localStorage.head_update' => 'bool'
                         ));
-                    }
-
-                    if ($forminput->get('css.async.load_timing.type') === 'media') {
-                        $forminput->type_verify(array(
-                            'css.async.load_timing.media' => 'string'
-                        ));
-                    }
-                }
-
-                // render timing
-                if ($forminput->bool('css.async.render_timing.enabled')) {
-                    $forminput->type_verify(array(
-                        'css.async.render_timing.type' => 'string'
-                    ));
-
-                    if ($forminput->get('css.async.render_timing.type') === 'requestAnimationFrame') {
-                        $forminput->type_verify(array(
-                            'css.async.render_timing.frame' => 'int-empty'
-                        ));
-                    }
-
-                    if ($forminput->get('css.async.render_timing.type') === 'requestIdleCallback') {
-                        $forminput->type_verify(array(
-                            'css.async.render_timing.timeout' => 'int-empty',
-                            'css.async.render_timing.setTimeout' => 'int-empty'
-                        ));
-                    }
-        
-                    if ($forminput->get('css.async.render_timing.type') === 'inview') {
-                        $forminput->type_verify(array(
-                        'css.async.render_timing.selector' => 'string',
-                        'css.async.render_timing.offset' => 'int-empty'
-                    ));
-                    }
-
-                    if ($forminput->get('css.async.render_timing.type') === 'media') {
-                        $forminput->type_verify(array(
-                        'css.async.render_timing.media' => 'string'
-                    ));
                     }
                 }
 
@@ -319,23 +386,19 @@ class AdminViewCss extends AdminViewBase
                     ));
                 }
 
-                // localStorage
-                if ($forminput->bool('css.async.localStorage.enabled')) {
-                    $forminput->type_verify(array(
-                        'css.async.localStorage.max_size' => 'int',
-                        'css.async.localStorage.expire' => 'int',
-                        'css.async.localStorage.update_interval' => 'int',
-                        'css.async.localStorage.head_update' => 'bool'
-                    ));
-                }
-
                 // proxy
                 if ($forminput->bool('css.proxy.enabled')) {
                     $forminput->type_verify(array(
                         'css.proxy.include' => 'newline_array',
-                        'css.proxy.capture.enabled' => 'bool',
-                        'css.proxy.capture.list' => 'json-array'
+                        'css.proxy.capture.enabled' => 'bool'
                     ));
+
+                    // proxy capture
+                    if ($forminput->bool('css.proxy.capture.enabled')) {
+                        $forminput->type_verify(array(
+                            'css.proxy.capture.list' => 'json-array'
+                        ));
+                    }
                 }
 
                 if ($forminput->bool('css.cdn.enabled')) {
@@ -370,7 +433,7 @@ class AdminViewCss extends AdminViewBase
                         }
 
                         if (!is_array($value) || empty($value) || array_keys($value)[0] === 0) {
-                            if (is_array($value) && array_keys($value)[0] === 0) {
+                            if (is_array($value) && (empty($value) || array_keys($value)[0] === 0)) {
                                 $arrayVal = $dotpath;
                             } else {
                                 $arrayVal = false;
@@ -380,8 +443,14 @@ class AdminViewCss extends AdminViewBase
                         }
                     }
 
+                    // delete existing options
+                    // @temp require core 0.0.24 but do not force
+                    if (version_compare(O10N_CORE_VERSION, '0.0.24', '>=')) {
+                        $this->options->delete('css.*');
+                    }
+
                     // replace all options
-                    $this->AdminOptions->save($flatArray, true);
+                    $this->AdminOptions->save($flatArray);
                 }
             break;
             default:
