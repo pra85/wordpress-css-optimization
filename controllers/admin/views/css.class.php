@@ -214,20 +214,31 @@ class AdminViewCss extends AdminViewBase
                         }
                     }
 
-                    // CSSmin settings
-                    $filters_options = array_keys((array)$this->AdminForm->schema_option('css.minify.cssmin.filters')->properties);
-                    array_walk($filters_options, function (&$value, $key) {
-                        $value = 'css.minify.cssmin.filters.' . $value;
-                    });
-                    $plugins_options = array_keys((array)$this->AdminForm->schema_option('css.minify.cssmin.plugins')->properties);
-                    array_walk($plugins_options, function (&$value, $key) {
-                        $value = 'css.minify.cssmin.plugins.' . $value;
-                    });
-                    $cssmin_options = array_flip(array_merge($filters_options, $plugins_options));
-                    array_walk($cssmin_options, function (&$value, $key) {
-                        $value = 'bool';
-                    });
-                    $forminput->type_verify($cssmin_options);
+                    // cssmin
+                    $forminput->type_verify(array(
+                        'css.minify.cssmin.filters.ImportImports' => 'bool',
+                        'css.minify.cssmin.filters.RemoveComments.enabled' => 'bool',
+                        'css.minify.cssmin.filters.RemoveEmptyRulesets' => 'bool',
+                        'css.minify.cssmin.filters.RemoveEmptyAtBlocks' => 'bool',
+                        'css.minify.cssmin.filters.ConvertLevel3Properties' => 'bool',
+                        'css.minify.cssmin.filters.ConvertLevel3AtKeyframes' => 'bool',
+                        'css.minify.cssmin.filters.Variables' => 'bool',
+                        'css.minify.cssmin.filters.RemoveLastDelarationSemiColon' => 'bool',
+
+                        'css.minify.cssmin.plugins.Variables' => 'bool',
+                        'css.minify.cssmin.plugins.ConvertFontWeight' => 'bool',
+                        'css.minify.cssmin.plugins.ConvertHslColors' => 'bool',
+                        'css.minify.cssmin.plugins.ConvertRgbColors' => 'bool',
+                        'css.minify.cssmin.plugins.ConvertNamedColors' => 'bool',
+                        'css.minify.cssmin.plugins.CompressColorValues' => 'bool',
+                        'css.minify.cssmin.plugins.CompressUnitValues' => 'bool',
+                        'css.minify.cssmin.plugins.CompressExpressionValues' => 'bool'
+                    ));
+                    if ($forminput->bool('css.minify.cssmin.filters.RemoveComments.enabled')) {
+                        $forminput->type_verify(array(
+                            'css.minify.cssmin.filters.RemoveComments.whitelist' => 'string'
+                        ));
+                    }
 
                     // verify search & replace
                     $cssreplace = $forminput->get('css.replace', 'json-array', array());

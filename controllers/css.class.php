@@ -51,6 +51,9 @@ class Css extends Controller implements Controller_Interface
 
     private $debug_mode = false;
 
+    private $minify_filters = array();
+    private $minify_plugins = array();
+
     /**
      * Load controller
      *
@@ -94,6 +97,30 @@ class Css extends Controller implements Controller_Interface
 
         // optimize CSS?
         if ($this->options->bool(['css.minify','css.async','css.proxy'])) {
+            if ($this->options->bool('css.minify')) {
+                $this->minify_filters = array(
+                    "ImportImports" => $this->options->bool('css.minify.cssmin.filters.ImportImports'),
+                    "RemoveComments" => (($this->options->bool('css.minify.cssmin.filters.ImportImports.enabled')) ? $this->options->get('css.minify.cssmin.filters.ImportImports.whitelist') : false),
+                    "RemoveEmptyRulesets" => $this->options->bool('css.minify.cssmin.filters.RemoveEmptyRulesets'),
+                    "RemoveEmptyAtBlocks" => $this->options->bool('css.minify.cssmin.filters.RemoveEmptyAtBlocks'),
+                    "ConvertLevel3Properties" => $this->options->bool('css.minify.cssmin.filters.ConvertLevel3Properties'),
+                    "ConvertLevel3AtKeyframes" => $this->options->bool('css.minify.cssmin.filters.ConvertLevel3AtKeyframes'),
+                    "Variables" => $this->options->bool('css.minify.cssmin.filters.Variables'),
+                    "RemoveLastDelarationSemiColon" => $this->options->bool('css.minify.cssmin.filters.RemoveLastDelarationSemiColon')
+                );
+
+                $this->minify_plugins = array(
+                    "Variables" => $this->options->bool('css.minify.cssmin.plugins.Variables'),
+                    "ConvertFontWeight" => $this->options->bool('css.minify.cssmin.plugins.ConvertFontWeight'),
+                    "ConvertHslColors" => $this->options->bool('css.minify.cssmin.plugins.ConvertHslColors'),
+                    "ConvertRgbColors" => $this->options->bool('css.minify.cssmin.plugins.ConvertRgbColors'),
+                    "ConvertNamedColors" => $this->options->bool('css.minify.cssmin.plugins.ConvertNamedColors'),
+                    "CompressColorValues" => $this->options->bool('css.minify.cssmin.plugins.CompressColorValues'),
+                    "CompressUnitValues" => $this->options->bool('css.minify.cssmin.plugins.CompressUnitValues'),
+                    "CompressExpressionValues" => $this->options->bool('css.minify.cssmin.plugins.CompressExpressionValues')
+                );
+            }
+
             $this->rebase_uris = $this->options->bool('css.minify.rebase.enabled');
             $this->process_import = $this->options->bool('css.minify.import.enabled');
             if ($this->process_import && $this->options->bool('css.minify.import.filter.enabled')) {
@@ -1710,7 +1737,7 @@ class Css extends Controller implements Controller_Interface
                 $minified['css'] = $this->minified_css_filters($minified['css']);
 
                 // footer
-                $minified['css'] .= "\n/* @src ".$sheet['href']." */";
+                //$minified['css'] .= "\n/* @src ".$sheet['href']." */";
 
                 if (isset($sheet['inline']) && $sheet['inline']) {
                     $this->css_elements[$n]['css'] = $minified['css'];
@@ -1782,9 +1809,10 @@ class Css extends Controller implements Controller_Interface
         foreach ($sources as $source) {
             $CSS .= ' ' . $source['css'];
         }
+
         // minify
         try {
-            $minified = CssMin::minify($CSS, $this->options->get('css.minify.cssmin.filters'), $this->options->get('css.minify.cssmin.plugins'));
+            $minified = CssMin::minify($CSS, $this->minify_filters, $this->minify_plugins);
         } catch (\Exception $err) {
             throw new Exception('PHP CssMin failed: ' . $err->getMessage(), 'css');
         }

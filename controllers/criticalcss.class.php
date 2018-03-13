@@ -400,7 +400,7 @@ class Criticalcss extends Controller implements Controller_Interface
 
         // minify
         try {
-            $minified = CssMin::minify($CSS, $this->options->get('css.critical.minify.cssmin.filters'), $this->options->get('css.critical.minify.cssmin.plugins'));
+            $minified = CssMin::minify($CSS, $this->options->get('css.critical.minify.cssmin.filters.*'), $this->options->get('css.critical.minify.cssmin.plugins.*'));
         } catch (\Exception $err) {
             throw new Exception('PHP CssMin failed: ' . $err->getMessage(), 'css');
         }
