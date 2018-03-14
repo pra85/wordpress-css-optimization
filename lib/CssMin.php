@@ -1299,7 +1299,7 @@ class CssRemoveCommentsMinifierFilter extends aCssMinifierFilter
         for ($i = 0, $l = count($tokens); $i < $l; $i++) {
             if (get_class($tokens[$i]) === "O10n\\CssCommentToken") {
                 try {
-                    $preserve = preg_match($whitelist, $tokens[$i]->Comment);
+                    $preserve = ($whitelist) ? preg_match($whitelist, $tokens[$i]->Comment) : false;
                 } catch (\Exception $e) {
                     $preserve = false;
                 }

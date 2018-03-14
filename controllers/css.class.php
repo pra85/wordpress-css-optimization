@@ -23,8 +23,8 @@ class Css extends Controller implements Controller_Interface
     private $client_module_dependencies = array();
 
     private $replace = null; // replace in CSS
-    private $stylesheet_cdn = null; // stylesheet CDN config
-    private $http2_push = null; // HTTP/2 Server Push config
+    private $stylesheet_cdn; // stylesheet CDN config
+    private $http2_push; // HTTP/2 Server Push config
 
     private $diff_hash_prefix; // diff based hash prefix
     private $last_used_minifier; // last used minifier
@@ -245,6 +245,39 @@ class Css extends Controller implements Controller_Interface
                         $this->client->set_config('css', 'localStorage_head_update', 1);
                     }
                 }
+            }
+
+            // CDN enabled
+            if ($this->options->bool('css.cdn')) {
+
+                // CDN config
+                $this->stylesheet_cdn = array(
+                    $this->options->get('css.cdn.url'),
+                    $this->options->get('css.cdn.mask')
+                );
+            } else {
+                $this->stylesheet_cdn = false;
+            }
+
+            // apply CDN to pushed assets
+            $this->http2_push_cdn = $this->options->bool('css.cdn.http2_push');
+
+            // HTTP/2 Server Push enabled
+            if ($this->options->bool('css.http2_push')) {
+                if (!$this->options->bool('css.http2_push.filter')) {
+                    $this->http2_push = true;
+                } else {
+                    $filterType = $this->options->get('css.http2_push.filter.type');
+                    $filterConfig = ($filterType) ? $this->options->get('css.http2_push.filter.' . $filterType) : false;
+
+                    if (!$filterConfig) {
+                        $this->http2_push = false;
+                    } else {
+                        $this->http2_push = array($filterType, $filterConfig);
+                    }
+                }
+            } else {
+                $this->http2_push = false;
             }
 
             // add filter for HTML output
@@ -884,7 +917,6 @@ class Css extends Controller implements Controller_Interface
                     'url' => 1,
                     'proxy' => 2
                 );
-
                 
                 foreach ($async_sheets as $sheet) {
                     if (!$sheet) {
@@ -928,6 +960,7 @@ class Css extends Controller implements Controller_Interface
                     $async_sheet[] = null; // media
                     $async_sheet[] = null; // load position
                     $async_sheet[] = null; // localStorage
+                    $async_sheet[] = null; // custom CDN
 
                     // sheet media
                     $media_set = $load_set = $render_set = false;
@@ -969,6 +1002,14 @@ class Css extends Controller implements Controller_Interface
                         $this->client->load_module('localstorage');
                     }
 
+                    // custom CDN
+                    if (isset($sheet['cdn']) && is_array($sheet['cdn']) && isset($sheet['cdn']['url'])) {
+                        $async_sheet[($index + 3)] = array($sheet['cdn']['url']);
+                        if (isset($sheet['cdn']['mask']) && $sheet['cdn']['mask']) {
+                            $async_sheet[($index + 3)][] = $sheet['cdn']['mask'];
+                        }
+                    }
+
                     $value_set = false;
                     for ($i = count($async_sheet); $i >= $index; $i--) {
                         if ($async_sheet[$i] !== null) {
@@ -992,6 +1033,16 @@ class Css extends Controller implements Controller_Interface
 
                 // add async list to client
                 $this->client->set_config('css', 'async', $async_list);
+
+                // add CDN config to client
+                if ($this->stylesheet_cdn) {
+                    $cdn_config = array();
+                    $cdn_config[$this->client->config_index('key', 'url')] = rtrim($this->stylesheet_cdn[0], '/ ');
+                    if (isset($this->stylesheet_cdn[1]) && $this->stylesheet_cdn[1]) {
+                        $cdn_config[$this->client->config_index('key', 'mask')] = $this->stylesheet_cdn[1];
+                    }
+                    $this->client->set_config('css', 'cdn', $cdn_config);
+                }
 
                 // add references
                 if ($this->debug_mode) {
@@ -1929,46 +1980,6 @@ class Css extends Controller implements Controller_Interface
      */
     final private function url_filter($url)
     {
-        // setup global CDN
-        if (is_null($this->stylesheet_cdn)) {
-
-            // global CDN enabled
-            if ($this->options->bool('css.cdn')) {
-
-                // global CDN config
-                $this->stylesheet_cdn = array(
-                    $this->options->get('css.cdn.url'),
-                    $this->options->get('css.cdn.mask')
-                );
-            } else {
-                $this->stylesheet_cdn = false;
-            }
-
-            // apply CDN to pushed assets
-            $this->http2_push_cdn = $this->options->bool('css.cdn.http2_push');
-        }
-
-        // setup HTTP/2 Server Push
-        if (is_null($this->http2_push)) {
-
-            // global CDN enabled
-            if ($this->options->bool('css.http2_push')) {
-                if (!$this->options->bool('css.http2_push.filter')) {
-                    $this->http2_push = true;
-                } else {
-                    $filterType = $this->options->get('css.http2_push.filter.type');
-                    $filterConfig = ($filterType) ? $this->options->get('css.http2_push.filter.' . $filterType) : false;
-
-                    if (!$filterConfig) {
-                        $this->http2_push = false;
-                    } else {
-                        $this->http2_push = array($filterType, $filterConfig);
-                    }
-                }
-            } else {
-                $this->http2_push = false;
-            }
-        }
 
         // apply HTTP/2 Server Push
         if ($this->http2_push) {
