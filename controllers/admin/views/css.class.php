@@ -455,10 +455,7 @@ class AdminViewCss extends AdminViewBase
                     }
 
                     // delete existing options
-                    // @temp require core 0.0.24 but do not force
-                    if (version_compare(O10N_CORE_VERSION, '0.0.24', '>=')) {
-                        $this->options->delete('css.*');
-                    }
+                    $this->options->delete('css.*');
 
                     // replace all options
                     $this->AdminOptions->save($flatArray);
